@@ -1,0 +1,142 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+html {
+    scroll-behavior: smooth;
+    font-family: Tahoma;
+}
+
+
+//success alert 
+.alert-success .alert-wrapper {
+  background-color: #FFF2D8;
+  border-radius: 25px;
+}
+.alert-success .alert-title {
+  color: #039f00;
+  text-align: center;
+  font-size: 18px;
+}
+.alert-success .alert-message {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+}
+.alert-success .alert-button-group {
+  display: flex;
+  justify-content: center;
+}
+.alert-success .alert-button{
+  box-shadow: 3px 4px 0px 0px #3dc21b;
+	background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
+	background-color:#44c767;
+	border-radius:18px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:17px;
+	padding:7px 25px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
+}
+
+// error alert
+.custom-alert .alert-message{
+    font-size: 16px;
+    color: #000000;/* Style the message text */
+  }
+
+.custom-alert .alert-wrapper {/* Change the background color of the alert card */
+    background-color: #FFF2D8; 
+    border-radius: 25px;
+ }
+ .custom-alert .alert-title {/* Change the color of the header text */
+    color: #ff0000;
+    font-size: 18px; 
+  }
+  .custom-alert .alert-button {
+    box-shadow: 3px 4px 0px 0px #eb4536;
+	  background:linear-gradient(to bottom, #c62d1f 5%, #f24437 100%);
+	  background-color:#c62d1f;
+	  border-radius:18px;
+	  border:1px solid #d02718;
+	  display:inline-block;
+	  cursor:pointer;
+	  color:#ffffff;
+	  font-family:Arial;
+	  font-size:17px;
+	  padding:7px 25px;
+	  text-decoration:none;
+	  text-shadow:0px 1px 0px #800545;
+  }
+
+  .custom-alert .alert-button:active {
+    position:relative;
+    top:1px;
+  }
+
+  .custom-alert .alert-button-group {
+    display: flex;
+    justify-content: center;
+  }
+
+.custom-logout .alert-wrapper {/* Change the background color of the alert card */
+  background-color: #FFF2D8; 
+}
+
+.custom-logout .alert-title {/* Change the color of the header text */
+  color: #ff0000;
+  font-size: 18px; 
+}
+
+.custom-logout .alert-message{
+  font-size: 16px;
+  color: #000000;/* Style the message text */
+}
+
+.custom-logout .alert-button-group {
+  margin-top: 10px;
+}
+
+.custom-logout button:last-child {
+  color: rgb(22, 211, 22);
+  font-size: 16px;
+}
+
+.custom-logout button:first-child{
+  color: red;
+  font-size: 16px;
+}
+  
+ion-content{
+  font-family: Tahoma;
+}
+
+ion-button {
+  font-size: 16px;
+}

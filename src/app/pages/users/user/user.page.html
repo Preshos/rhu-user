@@ -1,0 +1,27 @@
+<ion-content [fullscreen]="true" (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed">
+    <ion-refresher-content
+      refreshingSpinner="circles"
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="top-container">
+    <p> <b>Total Users:</b> {{ totalUsers }}</p>
+    <!-- <div class="back">
+      <ion-icon slot="start" name="chevron-back" (click)="back()"></ion-icon>
+    </div> -->
+  </div>
+  <!-- for animation delay -->
+  <!-- [ngStyle]="{'animation-delay': 'calc(' + i + ' * 100ms)'}" -->
+  <ion-card *ngFor="let user of user | async; let i = index" [routerLink]="'/user-details/' + user.id" [style.--animation-order]="i"
+  >
+    <ion-item>
+      <ion-thumbnail>
+        <img [src]="user.photourl ?? '/assets/placeholder.jpg'">
+      </ion-thumbnail>
+      <ion-label>{{ user.displayname }}</ion-label>
+    </ion-item>
+  </ion-card>
+
+</ion-content>

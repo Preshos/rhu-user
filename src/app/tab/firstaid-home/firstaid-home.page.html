@@ -1,0 +1,54 @@
+
+<ion-content>
+  <div class="img-top" >
+    <img src="/assets/backgrounds/herbs.jpg" alt="">
+  </div>
+  
+  <div class="sticky-search">
+    <div class="input-container">
+      <input type="text" class="input" placeholder="Search..." [(ngModel)]="searchTerm" (input)="onSearch()" autocomplete="off">
+      <span class="icon"> 
+        <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="1" d="M14 5H20" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M14 8H17" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 11.5C21 16.75 16.75 21 11.5 21C6.25 21 2 16.75 2 11.5C2 6.25 6.25 2 11.5 2" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M22 22L20 20" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+      </span>
+    </div>
+  </div>
+  
+ <!-- Display "No results found" message if there are no search results -->
+  <div *ngIf="!(searchResults | async)?.length && searchTerm.trim()">
+    <p>No results found.</p>
+  </div>
+
+  <!-- Display search results in a grid if there are results -->
+  <ion-grid *ngIf="searchResults && (searchResults | async)?.length > 0">
+    <ion-row>
+      <ion-col size="6" *ngFor="let info of (searchResults | async); let i = index" 
+      [routerLink]="'/firstaid-details/' + info.id">
+        <ion-card>
+          <img [src]="info?.photourl !== '' ? info.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
+          <p class="card-text">{{ info.name }}</p>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+<!-- Display original herb grid if no search results or no search performed -->
+<ion-grid *ngIf="!(searchResults | async)?.length && !(searchTerm.trim())">
+  <ion-row>
+    <ion-col size="6" *ngFor="let info of (firstaid | async); let i = index" 
+    [routerLink]="'/firstaid-details/' + info.id">
+      <ion-card>
+        <img [src]="info?.photourl !== '' ? info.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
+        <p class="card-text">{{ info.name }}</p>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+
+  <ion-fab  *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end" (click)="openNewModal()">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

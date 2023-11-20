@@ -1,0 +1,31 @@
+<ion-content>
+
+
+
+  <div class="container">
+    <div class="login">
+      <img src="/assets/rhu_logo.png" alt="">
+      <p>Email Verification</p>
+      <img src="/assets/san_isidro_logo.png" alt="">
+    </div>
+
+    <form (ngSubmit)="sendEmailVerification()" [formGroup]="credentials">
+      <div class="label-container">
+  
+          <p>Email</p>
+          <ion-item>
+            <ion-icon  name = "mail"></ion-icon>
+            <ion-input type="email" placeholder="user@gmail.com" formControlName="email"></ion-input>
+          </ion-item>
+        <div class="button">
+          <button  class="myButton" type="submit">Send Email Verification</button>
+        </div>
+        
+      </div>
+    </form>
+
+  </div>
+ 
+
+
+</ion-content>

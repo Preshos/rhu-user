@@ -1,0 +1,144 @@
+ion-content {
+    --background: #ededed;
+}
+.swiper_content{
+    text-align: center;
+}
+
+img {
+    width: 50%;
+  }
+
+p{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+swiper-container{
+    width: 100%;
+    height: 100%;
+    --swiper-pagination-color: brown;
+    --swiper-pagination-bullet-width: 10px;
+    --swiper-pagination-bullet-height: 10px;
+    --swiper-pagination-bullet-horizontal-gap: 5px;
+}
+
+swiper-slide {
+    display: flex;
+    position: relative;
+
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.button {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.button > * {
+    text-align: center;
+}
+
+.button p {
+    flex: 0;
+}
+
+.button button {
+    flex-shrink: 0;
+}
+
+swiper-slide {
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+
+
+  
+  .button1:hover .svgIcon {
+    transform: rotate(250deg);
+    transition-duration: 1.5s;
+  }
+  
+  
+  button {
+    appearance: button;
+    background-color: #c6a667;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 13px 19px;
+    text-align: center;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+   }
+   
+   button:after {
+    background-clip: padding-box;
+    background-color: #dbb874;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    bottom: -4px;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+   }
+   
+   button:main, button:focus {
+    user-select: auto;
+   }
+   
+   
+   
+   button:disabled {
+    cursor: auto;
+   }
+   
+   button:active:after {
+    border-width: 0 0 0px;
+   }
+   
+   button:active {
+    padding-bottom: 10px;
+   }

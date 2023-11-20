@@ -1,0 +1,48 @@
+ion-content {
+    --background: #ededed; 
+ }
+.container{
+    width: 100%;
+    padding: 50px;
+    background-color: #fbdea4;
+    .info{
+        font-size: 35px;
+        color:#000;
+        font-weight: 600;
+        margin: 0;
+    }
+}
+
+.sticky-segment{
+    position: sticky;
+    margin: 0;
+    background: #fff;
+    top: 0;
+    z-index: 1;
+    --color: #000;
+    --background-focused: red;
+ }
+
+ ion-segment-button {
+    --ripple-color: #aeaeae;
+    --indicator-height: 50px;
+    --indicator-color: #c5c5c5;
+    
+    --color: #000;
+ }
+
+ swiper-slide{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+ }
+ .card {
+    width:100%;
+    height: auto;
+    border-radius: 20px;
+    background: #f3dcaf; 
+    margin: 20px;
+    overflow: hidden;
+    padding: 15px; 
+  }

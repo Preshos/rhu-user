@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#" icon="chevron-back"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="info">
+
+  <div class="image-container">
+    <img [src]="info?.photourl !== '' ? info.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
+  </div>
+  
+  <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
+    <ion-segment-button value="1" (click)="selectSegment(1)">
+      <ion-label class="segment-text">Info</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="2" (click)="selectSegment(2)">
+      <ion-label class="segment-text">Techniques</ion-label>
+    </ion-segment-button>
+    <!-- <ion-segment-button value="3" (click)="selectSegment(3)">
+      <ion-label class="segment-text">Uses</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="4" (click)="selectSegment(4)">
+      <ion-label class="segment-text">Precautions</ion-label>
+    </ion-segment-button> -->
+  </ion-segment>
+  
+  <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper"
+  (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+
+    <!--segment 1 content-->
+    <swiper-slide value="1">
+      <div class="card">
+          <p>Name: <span>{{info.name}} </span> </p>
+          <p>Description</p>
+          <textarea class="card-text" readonly autosize [minRows]="6">{{info.description}}</textarea>
+      </div>
+    </swiper-slide>
+
+    <!--segment 2 content-->
+    <swiper-slide value="2">
+      <div class="card">
+        <p>What you need to do?</p>
+          <textarea class="card-text" readonly autosize [minRows]="6">{{info.description}}</textarea>
+      </div>
+    </swiper-slide>
+
+    
+  </swiper-container>
+
+</ion-content>
+

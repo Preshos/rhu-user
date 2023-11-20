@@ -1,0 +1,115 @@
+ion-content {
+    --background: #ededed; 
+}
+ 
+ .image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .image-container img{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+
+ .sticky-segment{
+    position: sticky;
+    margin: 0;
+    background: #fad6b7;
+    top: 0;
+    z-index: 1;
+ }
+  
+ h3{
+    text-transform: capitalize;
+ }
+ 
+ ion-segment-button {
+    --color: #000000;
+    
+    
+ }
+ ion-segment-button:nth-child(1) {
+    --indicator-color: #38ff6d;
+   //  --color-checked: #38ff6d;
+ }
+ ion-segment-button:nth-child(2) {
+    --indicator-color: #f8cb35;
+   //  --color-checked: #f8cb35;
+ }
+ ion-segment-button:nth-child(3) {
+    --indicator-color: #389fff;
+   //  --color-checked: #389fff;
+ }
+ ion-segment-button:nth-child(4) {
+    --indicator-color: #ff3838;
+   //  --color-checked: #389fff;
+ }
+  
+ swiper-slide{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+ }
+ swiper-slide:nth-child(1) .card {
+    border: 3px solid #38ff6d;
+  }
+  
+  swiper-slide:nth-child(2) .card {
+    border: 3px solid #f8cb35;
+  }
+  
+  swiper-slide:nth-child(3) .card {
+    border: 3px solid #389fff;
+  }
+  
+  swiper-slide:nth-child(4) .card {
+    border: 3px solid #ff3838;
+  }
+ 
+ 
+ .card {
+    width:100%;
+    height: auto;
+    border-radius: 20px;
+    background: #f3dcaf; 
+    margin: 20px;
+    overflow: hidden;
+    padding: 15px; 
+  }
+ 
+  .card > p {
+    color: #282828;
+    font-size: 18px;
+    line-height: 2; 
+    margin: 5px;
+    text-align: left;
+  }
+  .card span{
+    text-transform: capitalize;
+  }
+ 
+ swiper-container{
+    z-index: -1;
+ }
+
+ .card .card-text {
+   color: #282828;
+   font-size: 18px;
+   line-height: 2;
+   width: 100%;
+   border: 2px solid #f3dcaf;
+   box-sizing: border-box;
+   font-size: 18px;
+   line-height: 2;
+   outline: none;
+   overflow: auto;
+   background: #f3dcaf;
+   border-radius: 5px;
+ }

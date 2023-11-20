@@ -1,0 +1,37 @@
+<ion-content>
+  <swiper-container #swiper
+    [loop]="true" 
+    [pagination]="true" 
+    pagination-clickable="true"
+    keyboard="true"
+    effect="coverflow">
+    <!-- <swiper-slide *ngFor="let item of titles">
+      <div class="swiper_content">
+        <img src="{{item.url}}" alt="image">
+        <p>{{item.message}}</p>
+      </div>
+    </swiper-slide> -->
+
+    <swiper-slide>
+      <app-onboard1/>
+    </swiper-slide>
+
+    <swiper-slide>
+      <app-onboard2/>
+    </swiper-slide>
+
+    <swiper-slide>
+      <app-onboard3/>
+    </swiper-slide>
+  </swiper-container>
+  
+  <!-- <div class="button">
+    <p (click)="slidePrev()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </p>
+    <button routerLink="/login"> Get Started
+    </button>
+    <p (click)="slideNext()">
+    <ion-icon name="chevron-forward-outline"></ion-icon></p>
+  </div> -->
+</ion-content>

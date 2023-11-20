@@ -1,0 +1,43 @@
+
+<ion-content *ngIf="user | async as User">
+
+  <div class="back">
+    <ion-icon slot="start" name="chevron-back" (click)="back()"></ion-icon>
+  </div>
+  
+  <div class="profile-pic">
+    <img [src]="User.photourl ?? '/assets/avatar.png'"alt="">
+    <p class="profile-name">{{User.displayname}}</p>
+    <p class="profile-email">{{User.email}}</p>
+  </div>
+
+  <div class="buttons">
+    
+    <ion-item *ngIf="isAdmin" (click)="users()">
+      <ion-badge slot="end"> {{ totalUsers }} </ion-badge>
+      <ion-icon slot="start" name="person"></ion-icon>
+      <p>View all Users</p>
+      <ion-icon slot="end" name="chevron-forward"></ion-icon>
+    </ion-item>
+
+    <ion-item *ngIf="!isAdmin">
+      <ion-icon slot="start" name="person"></ion-icon>
+      <p>Edit Profile</p>
+      <ion-icon slot="end" name="chevron-forward"></ion-icon>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="information-circle"></ion-icon>
+      <p>About</p>
+      <ion-icon slot="end" name="chevron-forward"></ion-icon>
+    </ion-item>
+
+    <ion-item (click)="logout()">
+      <ion-icon slot="start" name="log-out"></ion-icon>
+      <p>Logout</p>
+      <ion-icon slot="end" name="chevron-forward"></ion-icon>
+    </ion-item>
+  </div>
+
+
+</ion-content>

@@ -1,0 +1,153 @@
+<ion-header class="ion-no-border" *ngIf="herb">
+  <ion-toolbar>
+    <ion-title class="title">Update {{herb.herbname}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="cancel()">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button strong="true" color="primary" (click)="submitForm()">
+        Done
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="herb" >
+
+  <div class="image-container">
+    <ng-container *ngIf="!updateHerbForm.get('photourl').value">
+      <img src="/assets/placeholder.jpg" alt="">
+    </ng-container>
+    <img [src]="updateHerbForm.get('photourl')?.value || herb.photourl" *ngIf="updateHerbForm.get('photourl').value || herb.photourl">
+  </div>
+
+  <div class="button-container">
+    <button (click)="openCamera()">
+      <ng-lottie [options]="option"></ng-lottie> 
+      Upload Photo
+    </button>
+  </div>
+
+
+  <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
+    <ion-segment-button value="1" (click)="selectSegment(1)">
+      <img src="/assets/icon/info.png" alt="">
+    </ion-segment-button>
+    <ion-segment-button value="2" (click)="selectSegment(2)">
+      <img src="/assets/icon/herbal.png" alt="">
+    </ion-segment-button>
+    <ion-segment-button value="3" (click)="selectSegment(3)">
+      <img src="/assets/icon/uses.png" alt="">
+    </ion-segment-button>
+    <ion-segment-button value="4" (click)="selectSegment(4)">
+      <img src="/assets/icon/danger.png" alt="">
+    </ion-segment-button>
+  </ion-segment>
+
+
+  <form [formGroup]="updateHerbForm" #updateForm="ngForm" (ngSubmit)="updateInfo(updateHerbForm.value)" *ngIf="herb">
+    
+    <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+
+       <!--segment 1 content-->
+      <swiper-slide value="1">
+        <div class="card">
+          <p>Herbal Name</p>
+            <textarea type="text" class="card-text" autosize [minRows]="1"formControlName="herbname"></textarea>
+          <p>Scientific Name:</p>
+            <textarea class="card-text" autosize [minRows]="1" formControlName="scientificname"></textarea>
+          <p>Description</p>
+            <textarea 
+            class="card-text" 
+            formControlName="description" 
+            autosize
+            [minRows]="6"
+            ></textarea>
+        </div>
+      </swiper-slide>
+
+       <!--segment 2 content-->
+      <swiper-slide value="2">
+        <div class="card">
+          <p>Uses</p>
+            <textarea 
+            class="card-text" 
+            formControlName="uses" 
+            autosize
+            [minRows]="6"
+            ></textarea>
+        </div>
+      </swiper-slide>
+
+      <!--segment 3 content-->
+      <swiper-slide value="3">
+        <div class="card">
+          <p>Uses</p>
+            <textarea 
+            class="card-text" 
+            formControlName="uses" 
+            autosize
+            [minRows]="6"
+            ></textarea>
+        </div>
+      </swiper-slide>
+
+
+      <!--segment 3 content-->
+    <swiper-slide value="3">
+      <div class="card" *ngFor="let precaution of updateHerbForm.get('precautions').value; let i = index">
+      <p>Precaution {{ i + 1 }}</p>
+
+      <textarea 
+          type="text"
+          class="card-text"
+          autosize
+          [minRows]="1"
+          [value]="updateHerbForm.get('title').value[i]"
+          readonly>
+        </textarea>
+    
+      <textarea
+        type="text"
+        class="card-text"
+        autosize
+        [minRows]="6"
+        [value]="precaution"
+        readonly>
+      ></textarea>
+      <button type="button" (click)="deletePrecaution(i)">Delete</button>
+
+    </div>
+
+    <div class="card">
+      
+      <p>Title</p>
+      <textarea
+          type="text"
+          class="card-text"
+          autosize
+          [minRows]="1"
+          formControlName="title_desc"
+        ></textarea>
+
+      <p>Method</p>
+        <textarea
+        type="text"
+        class="card-text"
+        autosize
+        [minRows]="6"
+        formControlName="desc"
+        ></textarea>
+      <button type="button" (click)="addPrecaution()">Add new Precaution</button>
+    </div>
+    
+    </swiper-slide>
+    </swiper-container>
+  </form>
+  <div class="button-container">
+    <button (click)="deleteInfo(herb.id)">Delete this info</button>
+  </div>
+</ion-content>
+
