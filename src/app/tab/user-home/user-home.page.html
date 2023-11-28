@@ -1,16 +1,13 @@
-
 <ion-content *ngIf="user | async as User">
 
-  <div class="back">
-    <ion-icon slot="start" name="chevron-back" (click)="back()"></ion-icon>
+  <br><br>
+
+  <div class="profile-pic" [routerLink]="'/user-details/' + User.uid" >
+    <img [ngClass]="{'online-border': isUserOnline, 'offline-border': !isUserOnline}" [src]="User.photourl ?? '/assets/avatar.png'" alt="">
+    <p class="profile-name">{{ User.firstname }}</p>
+    <p class="profile-email">{{ User.email }}</p>
   </div>
   
-  <div class="profile-pic">
-    <img [src]="User.photourl ?? '/assets/avatar.png'"alt="">
-    <p class="profile-name">{{User.displayname}}</p>
-    <p class="profile-email">{{User.email}}</p>
-  </div>
-
   <div class="buttons">
     
     <ion-item *ngIf="isAdmin" (click)="users()">
@@ -20,7 +17,7 @@
       <ion-icon slot="end" name="chevron-forward"></ion-icon>
     </ion-item>
 
-    <ion-item *ngIf="!isAdmin">
+    <ion-item [routerLink]="'/user-update/' + User.uid" >
       <ion-icon slot="start" name="person"></ion-icon>
       <p>Edit Profile</p>
       <ion-icon slot="end" name="chevron-forward"></ion-icon>

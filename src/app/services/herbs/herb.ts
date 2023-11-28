@@ -2,14 +2,20 @@ export class HerbInfo {
     id: string;
     herbname?: string;
     description?: string;
-    scientificname?: string;
-    uses?: string;
+    other_name?: string;
+    benefits?:string;
+    uses?:{
+        title: string;
+        content: string;
+        procedure:string;
+      }[];
+    // {
+    //   desc_title:string;
+    //   desc_content:string;
+    // }[];
     photourl?:string;
-    other_name?: string[];
-    desc?:string;
-    title_desc?:string;
-    precautions?:string[] = [];
-    title?:string[] = [];
+    beware?:string;
+    keywords?: string[];
 }
   
   

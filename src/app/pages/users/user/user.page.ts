@@ -31,7 +31,7 @@ export class UserPage implements OnInit {
   ngOnInit() {
     this.dataService.getTotalUsersCount().subscribe(count => {
       this.totalUsers = count;
-    });
+    }); 
   }
 
   back(){

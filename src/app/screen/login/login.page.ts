@@ -93,6 +93,8 @@ export class LoginPage implements OnInit {
         tap(
           async (user) => {
             if (user) {
+              // Update user status to online
+              await this.userService.updateUserStatusOnline(user.uid);
               // User exists, check email verification
               if (!user.emailVerified) {
                 await this.authService.sendEmailVerification().toPromise();

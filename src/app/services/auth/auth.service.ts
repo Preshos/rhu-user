@@ -18,9 +18,6 @@ import { ProfileUser } from '../users/user';
 })
 export class AuthService {
   
-  isLoggedIn() {
-    throw new Error('Method not implemented.');
-  }
 
   currenUser$ = authState(this.auth);
 
@@ -92,9 +89,16 @@ export class AuthService {
       return from(setDoc(userDocRef, data, { merge: true }));
     }
 
-  logout():Observable<any>{
-    return from(this.auth.signOut());
-  }
+    logout(): Observable<any> {
+      return from(this.auth.signOut()).pipe(
+        switchMap(() => {
+          // Reload the app after logout
+          window.location.reload();
+          // Return an observable that never emits to complete the stream
+          return new Observable();
+        })
+      );
+    }
 
   resetpassword(email):Observable<any>{
     return from (sendPasswordResetEmail(this.auth,email));

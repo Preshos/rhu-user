@@ -2,25 +2,10 @@ ion-thumbnail {
     size: 20%;
     margin-right: 20px;
   }
-  ion-card{
-    animation: popIn 0.5s calc(var(--animation-order) * 100ms) both ease-in;
-    
-  }
-  @keyframes popIn {
-    0% {
-      opacity: 0;
-      transform: scale(0.5) translateY(-50px,-50px);
-    }
-  
-    100% {
-      opacity: 1;
-      transform: none;
-    }
-  }
 
  @keyframes popIn {
   0% {
-    transform: scale(0.7);
+    transform: scale(0.9);
     opacity: 0;
   }
   100% {
@@ -36,15 +21,21 @@ ion-card {
   margin: 0;
   overflow: hidden;
   margin: 10px;
+  aspect-ratio: 1;
+  box-shadow: 4px 4px 8px  rgba(0, 0, 0, 0.4);
 }
 
 ion-card img {
   object-fit:cover;
+  object-position: center center;
   align-items: center;
   display: flex;
   aspect-ratio: 1;
   width: 100%;
-}
+  height: 100%;
+  }
+  
+
 
 .img-top{
   display: flex;
@@ -55,9 +46,10 @@ ion-card img {
 
 .img-top img{
   aspect-ratio: 16/9;
-  width:100%;
+  width:90%;
   object-fit: cover;
   background-position: center center;
+  border-radius: 25px;
 }
 
 .card-text {
@@ -71,6 +63,9 @@ ion-card img {
   text-align: center;
   padding: 10px;
   text-transform: capitalize;
+  font-size: 14px;
+  font-family: Tahoma;
+  letter-spacing: 1px;
 }
 
 .sticky-search {
@@ -82,15 +77,14 @@ ion-card img {
   margin: 0;
   margin-top: 20px;
 }
+
 ion-fab-button {
   --background: #b7f399;
   --background-activated: #87d361;
   --border-radius: 15px;
   --box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
   --color: black;
-}
-ion-content {
-  --background: #ededed;
+ 
 }
 
 .input-container {
@@ -134,4 +128,46 @@ ion-content {
     50% {
       transform: translateY(calc(-50% - 5px)) scale(1.1);
     }
+  }
+
+  //skeleton loadings css
+  .cards{
+  border-radius: 20px;
+  border: none;
+  margin: 0;
+  overflow: hidden;
+  margin: 10px;
+  aspect-ratio: 1;
+  }
+  
+  .fab{
+    position: fixed;
+    bottom:10px;
+    right: 10px;
+  }
+
+  .loading-fab{
+    --background: #ededed;
+  }
+  
+  .img{
+    aspect-ratio: 16/9;
+    width:90%;
+    object-fit: cover;
+    background-position: center center;
+    border-radius: 25px;
+    margin: 0;
+  }
+
+  .input_search{
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    transition: .2s linear;
+    border: none;
+    border-radius:30px;
+    font-size: 14px;
+    letter-spacing: .5px;
+    outline: none;
+    margin: 0;//set this to avoid overdriving the design
   }

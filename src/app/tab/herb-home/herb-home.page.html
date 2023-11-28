@@ -3,41 +3,49 @@
 
   <ion-refresher slot="fixed">
     <ion-refresher-content
-      refreshingSpinner="circles"
+      refreshingSpinner="crescent"
     >
     </ion-refresher-content>
   </ion-refresher>
 
   <br>
-  <swiper-container
-  loop="true"
-  autoplay="true">
-    <swiper-slide>
-      <div class="img-top" >
-        <img src="/assets/backgrounds/herbs.jpg" alt="">
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="img-top" >
-        <img src="/assets/backgrounds/herbs.jpg" alt="">
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="img-top" >
-        <img src="/assets/backgrounds/herbs.jpg" alt="">
-      </div>
-    </swiper-slide>
-  </swiper-container>
- 
-  
-  <div class="sticky-search">
-    <div class="input-container">
-      <input type="text" class="input" placeholder="Look For Medicinal Plant..." [(ngModel)]="searchTerm" (input)="onSearch()" autocomplete="off" clearInput="true">
-      <span class="icon"> 
-        <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="1" d="M14 5H20" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M14 8H17" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 11.5C21 16.75 16.75 21 11.5 21C6.25 21 2 16.75 2 11.5C2 6.25 6.25 2 11.5 2" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M22 22L20 20" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-      </span>
+  <div *ngIf="loadingData; else contentpic">
+    <div class="img-top" >
+      <ion-skeleton-text animated  class="img"></ion-skeleton-text>
     </div>
   </div>
+  <ng-template #contentpic>
+    <swiper-container
+    autoplay-delay="1500" 
+    autoplay-disable-on-interaction="false">
+      <swiper-slide *ngFor="let item of pictures">
+        <div class="img-top">
+          <img src={{item.url}} alt="">
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </ng-template>
+  <br>
+ 
+  
+  <div *ngIf="loadingData; else contentsearch">
+    <div class="sticky-search">
+      <div class="input-container">
+        <ion-skeleton-text animated class="input_search"></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #contentsearch>
+    <div class="sticky-search">
+      <div class="input-container">
+        <input type="text" class="input" placeholder="Search..." [(ngModel)]="searchTerm" (input)="onSearch()" autocomplete="off">
+        <span class="icon"> 
+          <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="1" d="M14 5H20" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M14 8H17" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 11.5C21 16.75 16.75 21 11.5 21C6.25 21 2 16.75 2 11.5C2 6.25 6.25 2 11.5 2" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="1" d="M22 22L20 20" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+        </span>
+      </div>
+    </div>
+  </ng-template>
   
  <!-- Use Angular ng-container to store async result locally -->
 <ng-container *ngIf="(searchResults | async) as results">
@@ -51,7 +59,7 @@
   <!-- Display search results in a grid if there are results -->
   <ion-grid *ngIf="results.length > 0">
     <ion-row>
-      <ion-col size="6" *ngFor="let herb of results; let i = index"
+      <ion-col size="6" *ngFor="let herb of results; let i = index; trackBy: trackByInfo"
       [routerLink]="'/herb-details/' + herb.id">
         <ion-card>
           <img [src]="herb?.photourl !== '' ? herb.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
@@ -62,23 +70,48 @@
   </ion-grid>
 </ng-container>
 
-  <!-- Display original herb grid if no search results or no search performed -->
+  <!--Display the Original Grid Loading-->
   <ion-grid *ngIf="!(searchResults | async)?.length && !(searchTerm.trim())">
-    <ion-row>
-      <ion-col size="6" *ngFor="let herb of (firstaid | async); let i = index" [style.--animation-order]="i"
-      [routerLink]="'/herb-details/' + herb.id">
-        <ion-card>
-          <img [src]="herb?.photourl !== '' ? herb.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
-          <p class="card-text">{{ herb.herbname }}</p>
-        </ion-card>
+    <ion-row *ngIf="loadingData; else content">
+      <ion-col size="6" *ngFor="let _ of [1, 2, 3, 4, 5, 6]">
+        <div class="cards">
+          <!-- Skeleton loading placeholders -->
+          <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+        </div>
       </ion-col>
     </ion-row>
+
+ <!--Display the Original Grid Content-->
+    <ng-template #content>
+      <ion-row>
+        <ion-col size="6" *ngFor="let herb of (firstaid | async); let i = index" 
+        [style.--animation-order]="i" [routerLink]="'/herb-details/' + herb.id">
+          <ion-card>
+            <img [src]="herb?.photourl !== '' ? herb.photourl : '/assets/placeholder.jpg'" alt="" height="150px">
+            <p class="card-text">{{ herb.herbname }}</p>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
 
-  <ion-fab  *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end" (click)="openNewModal()">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+
+  <div *ngIf="isAdmin" class="fab">
+    <div *ngIf="loadingData; else contentTemplate">
+      <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+        <ion-fab-button class="loading-fab">
+          <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
+        </ion-fab-button>
+      </ion-fab>
+    </div>
+    
+    <ng-template #contentTemplate>
+      <ion-fab *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end" (click)="openNewModal()">
+        <ion-fab-button>
+          <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ng-template>
+  </div>
 
 </ion-content>

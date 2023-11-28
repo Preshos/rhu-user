@@ -59,13 +59,13 @@ export class HerbCreatePage implements OnInit {
     this.createHerbForm = new FormGroup({
       'herbname': new FormControl('', Validators.required),
       'description': new FormControl('', Validators.required),
-      'uses': new FormControl(''),
-      'scientificname': new FormControl('', Validators.required),
+      'other_name': new FormControl('', Validators.required),
+      'uses':new FormArray([]),
       'photourl': new FormControl(''),
-      'desc':new FormControl(''),
-      'title_desc':new FormControl(''),
-      'precautions': new FormControl([]),
-      'title': new FormControl([])
+      'title': new FormControl(''),
+      'content': new FormControl(''),
+      'benefits': new FormControl(''),
+      'beware': new FormControl(''),
     });
   }
 
@@ -74,7 +74,7 @@ export class HerbCreatePage implements OnInit {
   }
 
   submitForm() {
-    this.addPrecaution();
+    this.addDescription();
     console.log(this.createHerbForm.value);
     // You can proceed with saving the form data
     this.createForm.onSubmit(undefined);
@@ -82,40 +82,64 @@ export class HerbCreatePage implements OnInit {
 
   createInfo(values: any) {
     values.herbname = values.herbname.toLowerCase();
-    let newHerb: HerbInfo = { ...values };
-    this.dataService.createHerbInfo(newHerb);
-    this.dismissModal();
+
+    // Extract description from the FormArray
+    const uses = values.uses.map((uses: any) => ({
+      title: uses.title,
+      content: uses.content
+    }));
+    
+    // Create the HerbInfo object without the 'id'
+    let newInfo: Omit<HerbInfo, 'id'> = {
+      herbname: values.herbname,
+      description: values.description,
+      photourl: values.photourl,
+      benefits:values.benefits,
+      beware:values.beware,
+      uses: uses,
+      other_name:values.other_name
+    };
+  
+    // Call the service to createHerbInfo
+    this.dataService.createHerbInfo(newInfo).then(() => {
+      this.dismissModal();
+    })
+    .catch(error => console.error('Error creating info:', error));
+  }
+
+  addDescription() {
+    const descriptionArray = this.createHerbForm.get('uses') as FormArray;
+  
+    // get the values from the main form
+    const titleValue = this.createHerbForm.get('title').value;
+    const contentValue = this.createHerbForm.get('content').value;
+  
+    // Check if both title and content values are not empty
+    if (titleValue && contentValue) {
+      // Add a new FormGroup to the FormArray with the values from the main form
+      descriptionArray.push(
+        new FormGroup({
+          'title': new FormControl(titleValue),
+          'content': new FormControl(contentValue)
+          //add more fields here
+        })
+      );
+  
+      // Reset the values of title and content in the main form (can add more fields)
+      this.createHerbForm.patchValue({
+        'title': '',
+        'content': ''
+      });
+    }
+  }
+
+  get descriptionControls() {
+    return (this.createHerbForm.get('uses') as FormArray).controls as FormGroup[];
   }
 
   ngOnDestroy() {
     this.sub1.unsubscribe();
   }
-
-  // onPhotoSelected(event: any) {
-  //   const storage = getStorage();
-
-  //   if (event.target.files && event.target.files[0]) {
-  //     const file = event.target.files[0];
-  //     const filePath = `herb_photos/${file.name}`;
-  //     const storageRef = ref(storage, filePath);
-  //     const uploadTask = uploadBytesResumable(storageRef, file);
-  
-  //     uploadTask.on('state_changed',
-  //       (snapshot) => {
-  //         // Handle upload progress
-  //       },
-  //       (error) => {
-  //         // Handle upload error
-  //       },
-  //       () => {
-  //         // Upload complete
-  //         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //           this.createHerbForm.patchValue({ photourl: downloadURL });
-  //         });
-  //       }
-  //     );
-  //   }
-  // }
 
   //for swiper config
   selectSegment(segment: number) {
@@ -210,22 +234,7 @@ export class HerbCreatePage implements OnInit {
     }
   }
   
-  addPrecaution() {
-    const desc = this.createHerbForm.get('desc').value;
-    const title_desc = this.createHerbForm.get('title_desc').value;
-
-    if (desc.trim() !== '' && title_desc.trim() !== '') {
-
-      const title = this.createHerbForm.get('title') as FormArray;
-      title.setValue([...title.value, title_desc]);
-
-      const precautions = this.createHerbForm.get('precautions') as FormArray;
-      precautions.setValue([...precautions.value, desc]);
-
-      this.createHerbForm.get('desc').setValue('');
-      this.createHerbForm.get('title_desc').setValue(''); 
-    }
-  }
+  
 
   
   

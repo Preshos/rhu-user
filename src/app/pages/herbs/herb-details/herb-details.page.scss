@@ -5,15 +5,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    
   }
   
   .image-container img{
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 90%;
     height: auto;
     aspect-ratio: 16/9;
     object-fit: cover;
+    border: 2px solid #000000;
+    border-radius: 25px;
+    box-shadow: 2px 2px 6px  rgba(0, 0, 0, 0.4);
   }
 
  .sticky-segment{
@@ -34,6 +38,7 @@
     text-transform: capitalize;
  }
  
+
  ion-segment-button {
     --margin: 0;
     --padding:0;
@@ -41,7 +46,38 @@
     --indicator-height: 50px;
     --indicator-color: #c5c5c5;
     --ripple-color: #fff;
+    --transition: background-color 15ms linear;
  }
+
+swiper-slide:nth-child(1) .card {
+  border: 3px solid #2acd55;
+}
+
+swiper-slide:nth-child(2) .card {
+  border: 3px solid #f8cb35;
+}
+
+swiper-slide:nth-child(3) .card , .card-text:focus{
+  border: 3px solid #389fff;
+}
+
+swiper-slide:nth-child(4) .card {
+  border: 3px solid #ff3838;
+}
+
+
+ion-segment-button:nth-child(1) {
+  --indicator-color: #a0ffb9;
+}
+ion-segment-button:nth-child(2) {
+  --indicator-color: #ffd884;
+}
+ion-segment-button:nth-child(3) {
+  --indicator-color: #6ec7ff;
+}
+ion-segment-button:nth-child(4) {
+  --indicator-color: #ff4d4d;
+}
  
  
  .card {
@@ -70,7 +106,7 @@
   .card-title p{
     font-weight: 600;
     font-size: 30px;
-    font-family: Calibri;
+    font-family: Tahoma;
     text-align: center;
     margin-top:20px;
     padding: 0;
@@ -92,10 +128,9 @@
    overflow: auto;
    background: #f6f6f6;
    border-radius: 5px;
-   text-align: justify;
-   word-spacing: 0;
+   text-align: left;
+   word-spacing: 0;;
    letter-spacing: 1px;
-   text-indent: 20px;
  }
 
  .card-text title{
@@ -113,4 +148,26 @@
 
 ion-tab-bar {
   --background: #fdf4ec;
+}
+
+ion-button {
+  img{
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+}
+
+ion-content {
+  --background: #FAF8F1;
+}
+
+
+.header{
+  text-align: center;
+  text-transform: capitalize;
+  font-family: Tahoma;
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 10px;
 }

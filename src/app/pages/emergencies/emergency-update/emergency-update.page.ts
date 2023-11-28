@@ -68,6 +68,7 @@ export class EmergencyUpdatePage implements OnInit {
   cancel(){
     this.router.navigate(['/emergency-details', this.info.id]);
   }
+  
   async submitForm() {
     const alert = await this.alertController.create({
       header: 'Confirm Update',

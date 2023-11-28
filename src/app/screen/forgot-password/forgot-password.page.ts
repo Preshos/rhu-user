@@ -73,6 +73,9 @@ export class ForgotPasswordPage implements OnInit {
         cssClass: 'alert-success',
       });
 
+      // Log out the user
+      this.authService.logout();
+      //reset the form
       this.credentials.reset();
       await alert.present();
     } catch (error) {

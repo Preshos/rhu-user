@@ -10,21 +10,38 @@
   }
   
   ion-card {
-    
     animation: popIn .4s calc(var(--animation-order) * 100ms) both ease-in;
     border-radius: 25px;
     border: 3px solid rgb(214, 255, 176);
     overflow: hidden;
     margin: 10px;
+    aspect-ratio: 1;
     box-shadow: 4px 4px 8px  rgba(0, 0, 0, 0.4);
   }
   
   ion-card img {
+    object-position: center center;
     object-fit:cover;
     align-items: center;
     display: flex;
     aspect-ratio: 1;
     width: 100%;
+    height: 100%;
+  }
+  .card-text {
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    text-transform: capitalize;
+    font-size: 14px;
+    font-family: Tahoma;
+    letter-spacing: 1px;
   }
   .img-top{
     display: flex;
@@ -38,21 +55,8 @@
     object-fit: cover;
     background-position: center center;
     border-radius: 25px;
-    border: 2px solid  rgb(214, 255, 176);
   }
-  .card-text {
-    position: absolute;
-    margin: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    text-transform: capitalize;
-    
-  }
+  
   
   .sticky-search {
     top: 0;
@@ -130,7 +134,49 @@
 }
 
 ion-content {
-  --background: #ededed;
+  --background: #FAF8F1;
 }
 
+
+//skeleton loadings css
+.cards{
+  border-radius: 20px;
+  border: none;
+  margin: 0;
+  overflow: hidden;
+  margin: 10px;
+  aspect-ratio: 1;
+  }
+  
+  .fab{
+    position: fixed;
+    bottom:10px;
+    right: 10px;
+  }
+  
+  .loading-fab{
+    --background: #ededed;
+  }
+  
+  .img{
+    aspect-ratio: 16/9;
+    width:90%;
+    object-fit: cover;
+    background-position: center center;
+    border-radius: 25px;
+    margin: 0;
+  }
+
+  .input_search{
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    transition: .2s linear;
+    border: none;
+    border-radius:30px;
+    font-size: 14px;
+    letter-spacing: .5px;
+    outline: none;
+    margin: 0;//set this to avoid overdriving the design
+  }
 

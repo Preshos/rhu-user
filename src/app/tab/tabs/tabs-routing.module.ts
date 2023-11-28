@@ -8,10 +8,6 @@ const routes: Routes = [
     path: 'tabs',
     component: TabsPage,
     children:[
-      {
-        path: 'home',
-        loadChildren: () => import('../home/home.module').then( m => m.HomePageModule)
-      },
       { path: 'herb-home', loadChildren: () => import('../herb-home/herb-home.module').then( m => m.HerbHomePageModule)}, 
       { path: 'aidkit-home', loadChildren: () => import('../aidkit-home/aidkit-home.module').then( m => m.AidkitHomePageModule)},
       { path: 'emergency-home', loadChildren: () => import('../emergency-home/emergency-home.module').then( m => m.EmergencyHomePageModule)},

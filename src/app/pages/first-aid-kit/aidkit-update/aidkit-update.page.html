@@ -2,14 +2,10 @@
   <ion-toolbar>
     <ion-title class="title">Update {{info.name}}</ion-title>
     <ion-buttons slot="start">
-      <ion-button color="primary" (click)="cancel()">
-        Cancel
-      </ion-button>
+      <img (click)="cancel()" src="/assets/icon/back.png" alt="">
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button strong="true" color="primary" (click)="submitForm()">
-        Done
-      </ion-button>
+      <img (click)="submitForm()" src="/assets/icon/done.png" alt="">
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -33,23 +29,15 @@
 
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
     <ion-segment-button value="1" (click)="selectSegment(1)">
-      <ion-label class="segment-text">Info</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="2" (click)="selectSegment(2)">
-      <ion-label class="segment-text">Properties</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="3" (click)="selectSegment(3)">
-      <ion-label class="segment-text">Uses</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="4" (click)="selectSegment(4)">
-      <ion-label class="segment-text">Precautions</ion-label>
+      <img src="/assets/icon/info.png" alt="">
     </ion-segment-button>
   </ion-segment>
 
 
   <form [formGroup]="updateInfoForm" #updateForm="ngForm" (ngSubmit)="updateInfo(updateInfoForm.value)" *ngIf="info">
     
-    <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+    <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" 
+    auto-height="true" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
 
        <!--segment 1 content-->
       <swiper-slide value="1">
@@ -65,54 +53,11 @@
             ></textarea>
         </div>
       </swiper-slide>
-
-       <!--segment 2 content-->
-      <swiper-slide value="2">
-        <div class="card">
-          <p>Description</p>
-          <textarea 
-          class="card-text" 
-          formControlName="description" 
-          autosize
-          [minRows]="6"
-          ></textarea>
-        </div>
-      </swiper-slide>
-
-      <!--segment 3 content-->
-      <swiper-slide value="3">
-        <div class="card">
-          <p>Description</p>
-            <textarea 
-            class="card-text" 
-            formControlName="description" 
-            autosize
-            [minRows]="6"
-            ></textarea>
-        </div>
-      </swiper-slide>
-
-      <!--segment 3 content-->
-      <swiper-slide value="3">
-        <div class="card">
-          <p>Description</p>
-            <textarea 
-            class="card-text" 
-            formControlName="description" 
-            autosize
-            [minRows]="6"
-            ></textarea>
-        </div>
-      </swiper-slide>
     </swiper-container>
   </form>
+
+  <div class="button-container">
+    <button (click)="deleteInfo(info.id)">>Delete this info</button>
+  </div>
+
 </ion-content>
-<ion-footer>
-  <ion-toolbar>
-    <ion-item button="true" detail="false" (click)="deleteInfo(info.id)">
-      <ion-label color="danger">
-        Delete Item
-      </ion-label>
-    </ion-item>
-  </ion-toolbar>
-</ion-footer>

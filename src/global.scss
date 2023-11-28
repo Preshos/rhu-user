@@ -32,6 +32,9 @@ html {
     // hello
 }
 
+ion-content {
+  --background: #FAF8F1;
+}
 
 //success alert 
 .alert-success .alert-wrapper {
@@ -141,4 +144,31 @@ ion-content{
 
 ion-button {
   font-size: 16px;
+}
+
+
+.kit-alert .alert-wrapper {
+  border-radius: 10px;
+}
+
+.kit-alert .alert-message {
+  height: max-content; /* You may set a specific value here based on your design */
+  max-height: 80vh; /* Adjust the value as needed */
+  overflow: hidden;
+  
+}
+
+.card-photo img {
+  object-position: center;
+  align-items: center;
+  object-fit: contain;
+  aspect-ratio: 4/3;
+  margin: 0;
+}
+
+.card-name {
+  text-transform: capitalize;
+  font-size: 16px;
+  color: red;
+  text-align: center;
 }

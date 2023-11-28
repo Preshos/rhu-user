@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileUser } from 'src/app/services/users/user';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
+ 
 @Component({
   selector: 'app-user-details',
   templateUrl: './user-details.page.html',
@@ -10,9 +11,10 @@ import { UserinfoService } from 'src/app/services/users/userinfo.service';
 })
 export class UserDetailsPage implements OnInit {
 
+  currentuser = this.userService.currentUserProfile$;
   public user: ProfileUser;
   sub1: Subscription;
-
+  isAdmin$: Observable<boolean>;
   constructor(
     private userService: UserinfoService,
     private activatedRoute: ActivatedRoute,
@@ -26,15 +28,22 @@ export class UserDetailsPage implements OnInit {
     .subscribe(user => {
       // if the contact doesn't exists, return to home page
       if (!user) {
-        this.router.navigate(['tabs/tabs/home']);
+        this.router.navigate(['tabs/tabs/user-home']);
       } else {
         this.user = user;
       }
     });
+  
   }
 
   ngOnDestroy() {
     this.sub1.unsubscribe();
   }
-
+  back(){
+    this.router.navigate(['tabs/tabs/user-home']);
+  }
+  isAdminLoggedIn(){
+    this.currentuser
+  }
+  
 }

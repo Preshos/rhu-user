@@ -1,0 +1,31 @@
+.card{
+    border: 1px solid;
+    font-family: Tahoma;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+.card-content{
+    margin: 5px;
+}
+
+.title{
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+    color: black;
+}
+
+.intro{
+    border-bottom: 1px solid red;
+    font-size: 16px;
+    font-weight: bold;
+    color: red;
+}
+
+.content{
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.5;
+    color: black;
+}

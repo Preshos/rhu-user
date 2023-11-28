@@ -5,14 +5,16 @@
     pagination-clickable="true"
     keyboard="true"
     effect="coverflow">
-    <!-- <swiper-slide *ngFor="let item of titles">
+    <swiper-slide *ngFor="let item of titles; let last = last">
       <div class="swiper_content">
         <img src="{{item.url}}" alt="image">
         <p>{{item.message}}</p>
       </div>
-    </swiper-slide> -->
+      <!-- Show button only on the last slide -->
+      <button *ngIf="last" routerLink="/login">Get Started</button>
+    </swiper-slide>
 
-    <swiper-slide>
+    <!-- <swiper-slide>
       <app-onboard1/>
     </swiper-slide>
 
@@ -22,7 +24,7 @@
 
     <swiper-slide>
       <app-onboard3/>
-    </swiper-slide>
+    </swiper-slide> -->
   </swiper-container>
   
   <!-- <div class="button">

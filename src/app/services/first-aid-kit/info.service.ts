@@ -47,19 +47,45 @@ export class InfoService {
       );
   }
 
+  //name gets partially search
   search(searchTerm: string): Observable<FirstAidKitInfo[]> {
     const herbsCollection = collection(this.firestore, 'firstaid');
+  
     const squery = query(
       herbsCollection,
       orderBy('name'),
-      where('name', '>=', searchTerm),
-      where('name', '<=', searchTerm + '\uf8ff')
     );
-
+  
     return collectionData(squery, { idField: 'id' }).pipe(
-      map((info) => info as FirstAidKitInfo[])
+      map((info) => {
+        // Filter the info partially
+        const filteredInfo = info.filter(info =>
+          info['name'].toLowerCase().includes(searchTerm.toLowerCase())
+        );
+  
+        return filteredInfo as FirstAidKitInfo[];
+      })
     );
   }
+
+  
+
+  //  search(searchTerm: string): Observable<Partial<FirstAidKitInfo>[]> {
+  //   const herbsCollection = collection(this.firestore, 'firstaid');
+  //   const squery = query(
+  //     herbsCollection,
+  //     where('description.titles', 'array-contains', searchTerm)
+  //   );
+  
+  //   return collectionData(squery, { idField: 'id' }).pipe(
+  //     map((info) => info.map(doc => ({
+  //       id: doc.id,
+  //       name: doc.name,
+  //       // Filter description based on title
+  //       description: doc.description?.filter(desc => desc.title.includes(searchTerm))
+  //     })))
+  //   );
+  // }
 
   createFirstAidKitInfo(info:FirstAidKitInfo): Promise<void> {
     const document = doc(collection(this.firestore, 'firstaid'));

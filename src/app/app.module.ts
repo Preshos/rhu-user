@@ -31,7 +31,7 @@ export function playerfactory(){
     AutosizeModule,
     BrowserModule,
     LottieModule.forRoot({player:playerfactory}),
-    IonicModule.forRoot(), 
+    IonicModule.forRoot({innerHTMLTemplatesEnabled:true}), 
     IonicStorageModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule, 

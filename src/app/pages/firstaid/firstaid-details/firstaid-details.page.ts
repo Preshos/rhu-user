@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirstaidService } from 'src/app/services/first-aid/firstaid.service';
 import { FirstAidInfo } from 'src/app/services/first-aid/firstaid';
 import Swiper from 'swiper';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-firstaid-details',
@@ -18,12 +19,14 @@ export class FirstaidDetailsPage implements OnInit {
   isTouchingTextarea = false;
   touchStartX = 0;
   touchStartY = 0;
+  isAdmin: boolean;
   @ViewChild('swiper') swiper?:ElementRef  <{swiper:Swiper}>;
 
   constructor(
     private infoService: FirstaidService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService : AuthService,
   ) {}
   ngOnInit() {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -36,6 +39,11 @@ export class FirstaidDetailsPage implements OnInit {
         this.info = info;
       }
     });
+    this.authService.isAdmin$
+      .pipe(take(1))
+      .subscribe((isAdmin) => {
+        this.isAdmin = isAdmin;
+      });
   }
   ngOnDestroy() {
     this.sub1.unsubscribe();

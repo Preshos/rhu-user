@@ -2,20 +2,18 @@
   <ion-toolbar>
     <ion-title>First Aid Information</ion-title>
     <ion-buttons slot="start">
-      <ion-button color="primary" (click)="dismissModal()">
-        Cancel
-      </ion-button>
+        <img (click)="dismissModal()" src="/assets/icon/back.png" alt="">
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button color="primary" [disabled]="!createInfoForm.valid" (click)="submitForm()">
-        Done
+        <img src="/assets/icon/done.png" alt="">
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content >
-  
+<ion-content>
+  <br>
   <div class="image-container">
     <ng-container *ngIf="!createInfoForm.get('photourl').value">
       <ng-lottie [options]="{ path: 'assets/json/placeholder_herb.json' }"></ng-lottie>
@@ -32,37 +30,55 @@
 
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
     <ion-segment-button value="1" (click)="selectSegment(1)">
-      <ion-label class="segment-text">Info</ion-label>
+      <img src="/assets/icon/info.png" alt="">
     </ion-segment-button>
     <ion-segment-button value="2" (click)="selectSegment(2)">
-      <ion-label class="segment-text">Techniques</ion-label>
+      <img src="/assets/icon/do.png" alt="">
     </ion-segment-button>
-   
   </ion-segment>
 
-
-  <form [formGroup]="createInfoForm" #createForm="ngForm" (ngSubmit)="createInfo(createInfoForm.value)">
+  <form [formGroup]="createInfoForm" #createForm="ngForm" 
+  auto-height="true" (ngSubmit)="createInfo(createInfoForm.value)">
 
     <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
 
-    <!--segment 1 content-->
-    <swiper-slide value="1">
-      <div class="card">
-        <p>Name</p>
-        <textarea type="text" class="card-text" autosize [minRows]="1" formControlName="name"></textarea>
-        <p>Description</p>
-        <textarea class="card-text" autosize [minRows]="6" formControlName="description"></textarea>
-      </div>
-    </swiper-slide>
 
-     <!--segment 2 content-->
-     <swiper-slide value="2">
-      <div class="card">
-        <p>What you ned to do:</p>
-        <textarea class="card-text" autosize [minRows]="6" formControlName="description"></textarea>
-      </div>
-    </swiper-slide>
+      <!-- Segment 1 content -->
+      <swiper-slide value="1">
+        <div class="card">
+          <p>Injury Name</p>
+          <textarea class="card-text" autosize [minRows]="1" formControlName="name"></textarea>
+        </div>
+        <div class="card">
+          <p>Introduction</p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="introduction"></textarea>
+        </div>
+        <div class="card">
+          <p>Cause</p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="cause"></textarea>
+        </div>
+      </swiper-slide>
+
+      <swiper-slide value="2">
+        <!-- Display subsequent cards when there are existing descriptions -->
+        <div class="card">
+          <p>What you need to do</p>
+        </div>
+
+        <div [formGroup]="description" class="card" *ngFor="let description of descriptionControls; let i = index">
+            <p>Step: {{i + 1}}</p>
+            <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
+        </div>
+        
+        <!-- Display the initial card -->
+        <div class="card">
+          <p>Step: </p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
+        </div>
+        <button type="button" (click)="addDescription()">Add Step</button>
+      </swiper-slide>
+
     </swiper-container>
-    </form>
+  </form>
 
 </ion-content>

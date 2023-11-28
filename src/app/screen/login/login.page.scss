@@ -1,6 +1,4 @@
-ion-content {
-    --background: #ededed;
-}
+
 .container {
     // border: 3px solid burlywood;
     margin-top: 5%;
@@ -9,6 +7,10 @@ ion-content {
     border-radius: 15px;
     overflow: hidden;
     padding: 15px;
+}
+.login > img {
+    width: 80px;
+    aspect-ratio: 1;
 }
 
 .login {

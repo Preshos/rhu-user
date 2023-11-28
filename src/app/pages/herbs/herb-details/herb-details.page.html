@@ -1,120 +1,87 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="cancel()">
-        <ion-icon  name="chevron-back-outline"></ion-icon>
-      </ion-button>
+        <img (click)="cancel()" src="/assets/icon/back.png" alt="">
     </ion-buttons>
 
     <ion-buttons slot="end" *ngIf="isAdmin">
-      <ion-button color="primary" *ngIf="herb" [routerLink]="'/herb-update/' + herb.id">
-        Edit
-      </ion-button>
+        <img  *ngIf="herb" [routerLink]="'/herb-update/' + herb.id" src="/assets/icon/edit.png" alt="">
     </ion-buttons>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content *ngIf="herb">
 
+  <br>
   <div class="image-container">
     <img [src]="herb?.photourl !== '' ? herb.photourl : '/assets/placeholder.jpg'" alt="">
   </div>
-  
+  <br>
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
     <ion-segment-button value="1" (click)="selectSegment(1)">
       <img src="/assets/icon/info.png" alt="">
     </ion-segment-button>
     <ion-segment-button value="2" (click)="selectSegment(2)">
-      <img src="/assets/icon/herbal.png" alt="">
+      <img src="/assets/icon/herb1.png" alt="">
     </ion-segment-button>
     <ion-segment-button value="3" (click)="selectSegment(3)">
       <img src="/assets/icon/uses.png" alt="">
     </ion-segment-button>
     <ion-segment-button value="4" (click)="selectSegment(4)">
-      <img src="/assets/icon/danger.png" alt="">
+      <img src="/assets/icon/danger1.png" alt="">
     </ion-segment-button>
   </ion-segment>
   
-  <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper"
+  <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper"  auto-height="true"
+
   (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
 
     <!--segment 1 content-->
     <swiper-slide value="1">
-      <div class="card-title">
-        <p> Information </p>
-      </div>
-
+      <div class="header">Information</div>
+     
       <div class="card">
-          <p>Herbal Name: <span> {{herb.herbname}} </span> </p>
+          <p>Name: <span>{{herb.herbname}} </span> </p>
+          <p>Other Name: <span>{{herb.other_name}} </span> </p>
       </div>
-
-      <div class="card">
-        <p>Other Name: <span> {{herb.scientificname}} </span></p>
-      </div>
-
       <div class="card">
         <p>Description</p>
         <textarea class="card-text" readonly autosize [minRows]="6">{{herb.description}}</textarea>
       </div>
-          
-
+      
     </swiper-slide>
 
     <!--segment 2 content-->
     <swiper-slide value="2">
-      <div class="card-title">
-        <p>Benefits</p>
-      </div>
-
+      <div class="header">Benefits</div>
+      
       <div class="card">
         <p>Herbal Name: <span>{{herb.herbname}} </span> </p>
-        <textarea class="card-text" readonly autosize [minRows]="6">{{herb.uses}}</textarea>
+        <textarea class="card-text" readonly autosize [minRows]="6">{{herb.benefits}}</textarea>
       </div>
     </swiper-slide>
-
+    
     <!--segment 3 content-->
     <swiper-slide value="3">
-      <div class="card-title">
-        <p> How to use </p>
-      </div>
-
-      <div class="card">
-       
-        <p>Herbal Name: <span>{{herb.herbname}} </span> </p>
-        <textarea class="card-text" readonly autosize [minRows]="6">{{herb.uses}}</textarea>
+      <div class="header">Uses</div>
+      
+      <div class="card" *ngFor="let description of herb.uses">
+        <p>Use For: {{description.title}}</p>
+        <p>Description:</p>
+        <textarea class="card-text" readonly autosize [minRows]="1">{{description.content}}</textarea>
+        <p>Method:</p>
+        <textarea class="card-text" readonly autosize [minRows]="1">{{description.procedure}}</textarea>
       </div>
     </swiper-slide>
 
-
-     <!--segment 4 content-->
+    <!--segment 4 content-->
     <swiper-slide value="4">
-      <div class="card-title">
-        <p> Disclaimer </p>
-      </div>
-      <div class="card" *ngFor="let precaution of herb.precautions; let i = index">
-        <p>Precaution {{ i + 1 }}</p>
-        <textarea
-          type="text"
-          class="card-text"
-          autosize
-          [minRows]="1"
-          readonly
-          style="margin-bottom: 0;"
-        >{{ herb.title[i] }}
-        </textarea>
-        <div class="textcard">
-          <textarea
-          type="text"
-          class="card-text"
-          autosize
-          [minRows]="6"
-          style="text-indent: 30px;"
-        >{{herb.precautions[i]}}</textarea>
-        </div>
+      <div class="header">Additional Information</div>
+      <div class="card">
+        <p>Dapat Tandaan</p>
+        <textarea class="card-text" readonly autosize [minRows]="6">{{herb.beware}}</textarea>
       </div>
     </swiper-slide>
-
     
   </swiper-container>
 

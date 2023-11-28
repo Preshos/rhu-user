@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,11 +10,13 @@ import { AidkitHomePage } from './aidkit-home.page';
 
 @NgModule({
   imports: [
+
     CommonModule,
     FormsModule,
     IonicModule,
     AidkitHomePageRoutingModule
   ],
-  declarations: [AidkitHomePage]
+  declarations: [AidkitHomePage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AidkitHomePageModule {}

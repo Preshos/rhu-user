@@ -64,9 +64,9 @@ export class AidkitUpdatePage implements OnInit {
     });
   }
   cancel(){
-    this.router.navigate(['/aidkit-details', this.info.id]);
+    this.router.navigate(['/tabs/tabs/aidkit-home']);
   }
-
+  
   async submitForm() {
     const alert = await this.alertController.create({
       header: 'Confirm Update',
@@ -92,7 +92,7 @@ export class AidkitUpdatePage implements OnInit {
               this.updateForm.onSubmit(undefined);
               await new Promise((resolve) => setTimeout(resolve, 500));
               await loading.dismiss();
-              this.router.navigate(['/aidkit-details', this.info.id]);
+              this.router.navigate(['/tabs/tabs/aidkit-home']);//'/aidkit-details', this.info.id
 
             } catch (error) {
               console.error('Update failed:', error);

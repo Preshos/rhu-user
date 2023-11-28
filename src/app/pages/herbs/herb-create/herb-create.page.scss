@@ -48,33 +48,36 @@ ng-lottie{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 90%;
     height: auto;
     aspect-ratio: 16/9;
     object-fit: cover;
+    border: 2px solid #000000;
+    border-radius: 25px;
+    box-shadow: 2px 2px 6px  rgba(0, 0, 0, 0.4);
+    object-position: center center;
   }
 
   .image-container img{
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 90%;
     height: auto;
     aspect-ratio: 16/9;
     object-fit: cover;
+   object-position: center center;
   }
- .sticky-segment{
-    position: sticky;
-    margin: 0;
-    padding-top: 10px;
-    background: #f3dcaf;
-    top: 0;
-    z-index: 1;
-    img{
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-    }
- }
+  .sticky-segment{
+   margin: 0;
+   background: #fdf4ec;
+   top: 0;
+
+   img{
+     width: 50px;
+     height: 50px;
+     object-fit: cover;
+   }
+}
   
  h3{
     text-transform: capitalize;
@@ -84,19 +87,20 @@ ng-lottie{
     --indicator-height:5px;
     --color: #000000;
     --color-checked: #000000;
+    --indicator-height: 50px;
     
  }
  ion-segment-button:nth-child(1) {
-    --indicator-color: #38ff6d;
+   --indicator-color: #a0ffb9;
  }
  ion-segment-button:nth-child(2) {
-    --indicator-color: #f8cb35;
+   --indicator-color: #ffd884;
  }
  ion-segment-button:nth-child(3) {
-    --indicator-color: #389fff;
+   --indicator-color: #6ec7ff;
  }
  ion-segment-button:nth-child(4) {
-    --indicator-color: #ff3838;
+   --indicator-color: #ff4d4d;
  }
   
  swiper-slide{
@@ -105,8 +109,8 @@ ng-lottie{
     flex-direction: column;
     justify-content: center;
     margin-top: 10px;
-    
  }
+
  swiper-slide:nth-child(1) .card {
     border: 3px solid #2acd55;
     .card-text:focus{
@@ -121,15 +125,19 @@ ng-lottie{
    }
   }
   
-  swiper-slide:nth-child(3) .card , .card-text:focus{
+  swiper-slide:nth-child(3) .card{
     border: 3px solid #389fff;
     .card-text:focus{
     border: 2px solid #389fff;
    }
+   
   }
   
   swiper-slide:nth-child(4) .card {
     border: 3px solid #ff3838;
+    .card-text:focus{
+      border: 2px solid #ff3838;
+     }
   }
  
   
@@ -137,7 +145,7 @@ ng-lottie{
    width: 90%;
    height: auto;
    border-radius: 20px;
-   background: #f3dcaf;
+   background: #ededed;
    margin: 20px;
    overflow: hidden;
    padding: 15px;
@@ -158,18 +166,29 @@ ng-lottie{
    font-size: 18px;
    line-height: 2;
    width: 100%;
-   border: 2px solid #f3dcaf;
+   border: 2px solid #f7f7f7;
    box-sizing: border-box;
    font-size: 18px;
    line-height: 2;
    outline: none;
    overflow: auto;
-   background: #fff1d4;
+   background: #f7f7f7;
    border-radius: 5px;
+   text-align: left;
+   letter-spacing: 1px;
  }
- 
+ ion-tab-bar {
+   --background: #fdf4ec;
+ }
 
-
+ .header{
+   text-align: center;
+   text-transform: capitalize;
+   font-family: Tahoma;
+   font-weight: bold;
+   font-size: 20px;
+   margin-top: 10px;
+ }
   
  
   

@@ -11,34 +11,105 @@
 
     <div class="label-container">
 
-        <p>Name</p>
+        <p>First Name</p>
         <ion-item>
-          <ion-icon name = "person"></ion-icon>
-          <ion-input type="text" placeholder="Name" formControlName="name"></ion-input>
+          <ion-input type="text" placeholder="Juan" formControlName="firstname"></ion-input>
         </ion-item>
-        <ion-note slot="error" *ngIf="(name.dirty || name.touched) && name.errors">Name is required</ion-note>
+        <ion-note slot="error" *ngIf="(firstname.dirty || firstname.touched) && firstname.errors">*Required</ion-note>
         
+        <p>Middle Initial</p>
+        <ion-item>
+          <ion-input type="text" placeholder="Domingo." formControlName="midname"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(midname.dirty || midname.touched) && midname.errors">*Required</ion-note>
+
+        <p>Last Name</p>
+        <ion-item>
+          <ion-input type="text" placeholder="Dela Cruz" formControlName="lastname"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(lastname.dirty || lastname.touched) && lastname.errors">*Required</ion-note>
+
+        <p>Age</p>
+        <ion-item>
+          <ion-input type="number" placeholder="16" formControlName="age"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(age.dirty || age.touched) && age.errors">*Required</ion-note>
+
+        <p>Phone Number</p>
+        <ion-item>
+          <ion-input type="tel" maxlength="11" placeholder="09XXXXXXXXX" formControlName="phone"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(phone.dirty || phone.touched) && phone.errors">*Required</ion-note>
+
+        <p>Gender</p>
+        <ion-item>
+          <ion-select formControlName="gender" placeholder="Select Gender">
+            <ion-select-option value="Male">Male</ion-select-option>
+            <ion-select-option value="Female">Female</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        
+          <p>Steet</p>
+          <ion-item>
+            <ion-input type="text" placeholder="" formControlName="age"></ion-input>
+          </ion-item>
+
+          <p>Barangay</p>
+          <ion-item>
+            <ion-input type="text" placeholder="Alua" formControlName="brgy"></ion-input>
+          </ion-item>
+          <!-- <ion-item>
+            <ion-select formControlName="brgy" multiple="true" placeholder="Barangay">
+              <ion-select-option value="Alua">Alua</ion-select-option>
+              <ion-select-option value="Calaba">Calaba</ion-select-option>
+              <ion-select-option value="Malapit">Malapit</ion-select-option>
+              <ion-select-option value="Mangga">Mangga</ion-select-option>
+              <ion-select-option value="Poblacion">Poblacion</ion-select-option>
+              <ion-select-option value="Pulo">Pulo</ion-select-option>
+              <ion-select-option value="San Roque">San Roque</ion-select-option>
+              <ion-select-option value="Sitio Polillio">Sitio Polillio</ion-select-option>
+              <ion-select-option value="Sto. Cristo">Sto. Cristo</ion-select-option>
+              <ion-select-option value="Tabon">Tabon</ion-select-option>
+            </ion-select>
+          </ion-item> -->
+          <ion-note slot="error" *ngIf="(brgy.dirty || brgy.touched) && brgy.errors">*Required</ion-note>
+        
+
+        <p>City</p>
+        <ion-item>
+          <ion-input type="text" placeholder="San Isidro" formControlName="city"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(city.dirty || city.touched) && city.errors">*Required</ion-note>
+
+        <p>Province</p>
+        <ion-item>
+          <ion-input type="text" placeholder="Nueva Ecija" formControlName="province"></ion-input>
+        </ion-item>
+        <ion-note slot="error" *ngIf="(province.dirty || province.touched) && province.errors">*Required</ion-note>
+
         <p>Email</p>
         <ion-item>
           <ion-icon  name ="mail"></ion-icon>
           <ion-input type="email" placeholder="user@gmail.com" formControlName="email"></ion-input>
         </ion-item>
-        <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors">Invalid Email</ion-note>
+        <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors">*Invalid Email</ion-note>
 
+        
         <p>Password</p>
         <ion-item>
           <ion-icon name="lock-closed"></ion-icon>
           <ion-input type="{{showpass ? 'text' : 'Password'}}" placeholder="********" formControlName="password"></ion-input>
           <ion-icon slot="end" [name] = "showpass ? 'eye-off': 'eye'" (click)="toggleshow()"></ion-icon>
         </ion-item>
-        <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">Password must consist of 8 letters with 1 capital and number</ion-note>
+        <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">*Password must consist of 8 letters with 1 capital and number</ion-note>
 
         <p>Confirm Password</p>
         <ion-item>
           <ion-icon name="lock-closed"></ion-icon>
           <ion-input type="{{showpass ? 'text' : 'password'}}" formControlName="confirmPassword" ></ion-input>
         </ion-item>
-        <ion-note slot="error" *ngIf="signUpForm.errors?.['passwordsDontMatch']">Password don't match</ion-note> 
+        <ion-note slot="error" *ngIf="signUpForm.errors?.['passwordsDontMatch']">*Password don't match</ion-note> 
 
         <div class="button">
           <button class="myButton" type="submit">
@@ -46,6 +117,7 @@
           </button>
         </div>
     </div>
+
     </form>
 
     <div class="footer">

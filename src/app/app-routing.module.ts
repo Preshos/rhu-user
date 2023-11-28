@@ -1,42 +1,49 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { redirectUnauthorizedTo, redirectLoggedInTo,canActivate} from '@angular/fire/auth-guard';
-import { AuthService } from './services/auth/auth.service';
+
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['tabs']) 
 const routes: Routes = [ 
 
-  { path: '', redirectTo: 'landingpage', pathMatch: 'full' },
+  { path: '', redirectTo: 'splash', pathMatch: 'full' },
+  {
+    path: 'splash',
+    loadChildren: () => import('./pages/splash/splash.module').then( m => m.SplashPageModule),
+    ...canActivate(redirectLoggedInToHome)
+  },
   {
     path: 'landingpage',
     loadChildren: () => import('./screen/landingpage/landingpage.module').then( m => m.LandingpagePageModule),
-    
+    ...canActivate(redirectLoggedInToHome)
   },
   {
     path: 'login',
     loadChildren: () => import('./screen/login/login.module').then( m => m.LoginPageModule),
-    
+    ...canActivate(redirectLoggedInToHome)
   },
  
   {
     path: 'signup',
     loadChildren: () => import('./screen/signup/signup.module').then( m => m.SignupPageModule),
-    
-  },
-  {
-    path: 'verify-email',
-    loadChildren: () => import('./screen/verify-email/verify-email.module').then( m => m.VerifyEmailPageModule),
-
+    ...canActivate(redirectLoggedInToHome)
   },
   {
     path: 'forgot-password',
     loadChildren: () => import('./screen/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule),
+    ...canActivate(redirectLoggedInToHome)
     
   },
   {
     path: 'tabs',
     loadChildren: () => import('./tab/tabs/tabs.module').then( m => m.TabsPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'verify-email',
+    loadChildren: () => import('./screen/verify-email/verify-email.module').then( m => m.VerifyEmailPageModule),
+
   },
   {
     path: 'herb-create',
@@ -94,11 +101,60 @@ const routes: Routes = [
     path: 'user',
     loadChildren: () => import('./pages/users/user/user.module').then( m => m.UserPageModule)
   },
+  {
+    path: 'firstaid-info',
+    loadChildren: () => import('./learn/firstaid/firstaid-info/firstaid-info.module').then( m => m.FirstaidInfoPageModule)
+  },
+  {
+    path: 'aim',
+    loadChildren: () => import('./learn/firstaid/aim/aim.module').then( m => m.AimPageModule)
+  },
+  {
+    path: 'what',
+    loadChildren: () => import('./learn/firstaid/what/what.module').then( m => m.WhatPageModule)
+  },
+  {
+    path: 'why',
+    loadChildren: () => import('./learn/firstaid/why/why.module').then( m => m.WhyPageModule)
+  },
+  {
+    path: 'what',
+    loadChildren: () => import('./learn/herbal/what/what.module').then( m => m.WhatPageModule)
+  },
+  {
+    path: 'why',
+    loadChildren: () => import('./learn/herbal/why/why.module').then( m => m.WhyPageModule)
+  },
+  {
+    path: 'aim',
+    loadChildren: () => import('./learn/herbal/aim/aim.module').then( m => m.AimPageModule)
+  },
+  {
+    path: 'herbal-info',
+    loadChildren: () => import('./learn/herbal/herbal-info/herbal-info.module').then( m => m.HerbalInfoPageModule)
+  },
+  {
+    path: 'what-herb',
+    loadChildren: () => import('./learn/herbal/what-herb/what-herb.module').then( m => m.WhatHerbPageModule)
+  },
+  {
+    path: 'whay-herb',
+    loadChildren: () => import('./learn/herbal/whay-herb/whay-herb.module').then( m => m.WhayHerbPageModule)
+  },
+  {
+    path: 'aim-herb',
+    loadChildren: () => import('./learn/herbal/aim-herb/aim-herb.module').then( m => m.AimHerbPageModule)
+  },
+  {
+    path: 'user-update/:id',
+    loadChildren: () => import('./pages/user-update/user-update.module').then( m => m.UserUpdatePageModule)
+  },
+  
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, onSameUrlNavigation: 'reload' })
   ],
   exports: [RouterModule]
 })

@@ -22,10 +22,10 @@ export class HerbinfoService {
 
   constructor(private firestore: Firestore) {}
 
-  //'first_aid' = herbs database in firebase 
+  //'' = herbs database in firebase 
 
   getHerbInfo(): Observable<HerbInfo[]> {
-    const herbsCollection = collection(this.firestore, 'first_aid');
+    const herbsCollection = collection(this.firestore, 'herbal_plants');
     // this method returns a stream of documents mapped to their payload and id
     return collectionData(herbsCollection, {idField: 'id'})
     .pipe(
@@ -35,7 +35,7 @@ export class HerbinfoService {
 
    // Add a method to get alphabetically sorted data
    getHerbInfoAlphabetically(): Observable<HerbInfo[]> {
-    const herbsCollection = collection(this.firestore, 'first_aid');
+    const herbsCollection = collection(this.firestore, 'herbal_plants');
     // Query to order data by the 'name' field (can replace 'name' with desired field)
     const alphabeticallySortedQuery = query(
       herbsCollection,
@@ -48,23 +48,66 @@ export class HerbinfoService {
         map(herbs => herbs as HerbInfo[])
       );
   }
-  
+
+// // herb name gets partially searched, and keywords can be partially matched
+// searchHerbs(searchTerm: string): Observable<HerbInfo[]> {
+//   const herbsCollection = collection(this.firestore, 'herbal_plants');
+
+//   // Convert searchTerm into lowercase array of keywords
+//   const searchKeywords = searchTerm.toLowerCase().split(' ');
+
+//   const squery = query(
+//       herbsCollection,
+//       orderBy('herbname'),
+//   );
+
+//   return collectionData(squery, { idField: 'id' }).pipe(
+//       map((herbs) => {
+//           // Filter the herbs based on partial match in herbname or partial match in keywords
+//           const filteredHerbs = herbs.filter(herb => {
+//               const herbnameMatch = herb['herbname'].toLowerCase().includes(searchTerm.toLowerCase());
+//               const keywordMatch = Array.isArray(herb['keywords']) && herb['keywords'].some(keyword =>
+//                   searchKeywords.some(searchWord => keyword.includes(searchWord))
+//               );
+
+//               return herbnameMatch || keywordMatch;
+//           });
+
+//           return filteredHerbs as HerbInfo[];
+//       })
+//   );
+// }
+
+
+
+  // herb name gets partially search but the keywords must be full
   searchHerbs(searchTerm: string): Observable<HerbInfo[]> {
-    const herbsCollection = collection(this.firestore, 'first_aid');
+    const herbsCollection = collection(this.firestore, 'herbal_plants');
+  
+    // Convert searchTerm into lowercase array of keywords
+    const searchKeywords = searchTerm.toLowerCase().split(' ');
+  
     const squery = query(
       herbsCollection,
       orderBy('herbname'),
-      where('herbname', '>=', searchTerm),
-      where('herbname', '<=', searchTerm + '\uf8ff')
     );
-
     return collectionData(squery, { idField: 'id' }).pipe(
-      map((herbs) => herbs as HerbInfo[])
+      map((herbs) => {
+        // Filter the herbs based on partial match in herbname or keywords
+        const filteredHerbs = herbs.filter(herb =>
+          herb['herbname'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (Array.isArray(herb['keywords']) && searchKeywords.every(keyword =>
+            herb['keywords'].includes(keyword)
+          ))
+        );
+  
+        return filteredHerbs as HerbInfo[];
+      })
     );
   }
   
   getHerbInfoById(id: string): Observable<HerbInfo> {
-    const document = doc(this.firestore, `first_aid/${id}`);
+    const document = doc(this.firestore, `herbal_plants/${id}`);
     return docSnapshots(document)
     .pipe(
       map(doc => {
@@ -75,25 +118,76 @@ export class HerbinfoService {
     );
   }
 
-  createHerbInfo(herb:HerbInfo): Promise<void> {
-    const document = doc(collection(this.firestore, 'first_aid'));
-    return setDoc(document, herb);
-  }
 
-  updateHerbInfo(herb:HerbInfo): Promise<void> {
-    const document = doc(this.firestore, 'first_aid', herb?.id);
-    const { id, ...data } = herb;
-    return setDoc(document, data);
+  createHerbInfo(herb: Omit<HerbInfo, 'id'>): Promise<void> {
+    // Create a document in the 'herbal_plants' collection with an auto-generated ID
+    const document = doc(collection(this.firestore, 'herbal_plants'));
+
+    // Convert herbname, description, and uses into lowercase arrays of keywords
+    const herbnameKeywords = this.extractKeywords(herb.herbname);
+    const otherKeywords = this.extractKeywords(herb.other_name);
+    
+    // Extract titles from the description and convert them into lowercase arrays of keywords
+    // const descKeywords = herb.description?.map(desc => this.extractKeywords(desc.desc_title)) || [];
+
+    // // Combine keywords from all fields
+    // const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords].concat(...descKeywords))];
+    // Combine keywords from all fields
+    const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
+
+    // Add the keywords array to the herb object
+    herb.keywords = allKeywords;
+
+    console.log('Herb created to Firestore:', herb);
+
+    // Set the data for the document, including the 'id' property
+    return setDoc(document, { ...herb, id: document.id });
+}
+
+updateHerbInfo(herb: HerbInfo): Promise<void> {
+  const document = doc(this.firestore, 'herbal_plants', herb?.id);
+
+  // Remove symbols and convert herbname, description, and uses into lowercase arrays of keywords
+  const herbnameKeywords = this.extractKeywords(herb.herbname);
+  const otherKeywords = this.extractKeywords(herb.other_name);
+  
+  // Combine keywords from all fields
+  const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
+
+  // Add the keywords array to the herb object
+  herb.keywords = allKeywords;
+
+  const { id, ...data } = herb;
+  console.log('Herb updated to Firestore:', herb);
+  return setDoc(document, data);
   }
+  
+  // to extract keywords and remove symbols, including newlines
+  extractKeywords(text: string): string[] {
+  const sanitizedText = text.replace(/[^\w\s]/g, '').replace(/[\n\r]/g, ' '); // Remove non-alphanumeric characters and replace newlines with spaces
+  return sanitizedText.toLowerCase().split(' ');
+}
+
+  // updateHerbInfo(info: HerbInfo): Promise<void> {
+  //   // Get the document in the 'basic_firstaid' collection
+  //   const document = doc(this.firestore, 'herbal_plants', info?.id);
+  
+  //   // Update the data for the existing document
+  //   return setDoc(document, info);
+  // }
   
 
   deleteHerbInfo(id: string): Promise<void> {
-    const document = doc(this.firestore, 'first_aid', id);
+    const document = doc(this.firestore, 'herbal_plants', id);
     return deleteDoc(document);
   }
+
    // Add this method to save precautions to Firestore
    savePrecautionsToFirestore(id: string, precautions: string): Promise<void> {
-    const document = doc(this.firestore, 'first_aid', id);
-    return setDoc(document, { precautions }, { merge: true });
+    const document = doc(this.firestore, '', id);
+    return 
+    setDoc(document, { precautions }, { merge: true });
   }
+
+ 
 }

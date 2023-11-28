@@ -46,29 +46,55 @@ export class FirstaidService {
       );
   }
 
+  // search(searchTerm: string): Observable<FirstAidInfo[]> {
+  //   const herbsCollection = collection(this.firestore, 'basic_firstaid');
+  //   const squery = query(
+  //     herbsCollection,
+  //     orderBy('name'),
+  //     where('name', '>=', searchTerm),
+  //     where('name', '<=', searchTerm + '\uf8ff')
+  //   );
+
+  //   return collectionData(squery, { idField: 'id' }).pipe(
+  //     map((info) => info as FirstAidInfo[])
+  //   );
+  // }
+
+  //name gets partially search
   search(searchTerm: string): Observable<FirstAidInfo[]> {
     const herbsCollection = collection(this.firestore, 'basic_firstaid');
+  
     const squery = query(
       herbsCollection,
       orderBy('name'),
-      where('name', '>=', searchTerm),
-      where('name', '<=', searchTerm + '\uf8ff')
     );
-
+  
     return collectionData(squery, { idField: 'id' }).pipe(
-      map((info) => info as FirstAidInfo[])
+      map((info) => {
+        // Filter the info partially
+        const filteredInfo = info.filter(info =>
+          info['name'].toLowerCase().includes(searchTerm.toLowerCase())
+        );
+  
+        return filteredInfo as FirstAidInfo[];
+      })
     );
   }
 
-  createFirstAidInfo(info:FirstAidInfo): Promise<void> {
+  createFirstAidInfo(info: Omit<FirstAidInfo, 'id'>): Promise<void> {
+    // Create a document in the 'basic_firstaid' collection with an auto-generated ID
     const document = doc(collection(this.firestore, 'basic_firstaid'));
-    return setDoc(document, info);
+    // Set the data for the document, including the 'id' property
+    return setDoc(document, { ...info, id: document.id });
   }
-
-  updateFirstAidInfo(info:FirstAidInfo): Promise<void> {
+  
+  
+  updateFirstAidInfo(info: FirstAidInfo): Promise<void> {
+    // Get the document in the 'basic_firstaid' collection
     const document = doc(this.firestore, 'basic_firstaid', info?.id);
-    const { id, ...data } = info;
-    return setDoc(document, data);
+  
+    // Update the data for the existing document
+    return setDoc(document, info);
   }
 
   deleteFirstAidInfo(id: string): Promise<void> {

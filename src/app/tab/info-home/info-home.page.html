@@ -1,42 +1,29 @@
 <ion-content>
+
   <div class="container">
     <p class="info">Information</p>
     <p>You should know</p>
   </div>
-
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
-    <ion-segment-button value="1" (click)="selectSegment(1)">
-      <ion-label class="segment-text">First Aid</ion-label>
+    <ion-segment-button *ngFor="let segment of segments" [value]="segment.value" (click)="selectSegment(segment.value)">
+      <img [src]="segment.image" alt="">
     </ion-segment-button>
-    <ion-segment-button value="2" (click)="selectSegment(2)">
-      <ion-label class="segment-text">Traditional Medicine</ion-label>
-    </ion-segment-button>
-    <!-- <ion-segment-button value="3" (click)="selectSegment(3)">
-      <ion-label class="segment-text">Uses</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="4" (click)="selectSegment(4)">
-      <ion-label class="segment-text">Precautions</ion-label>
-    </ion-segment-button> -->
   </ion-segment>
 
-  <!-- (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" -->
+  <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper">
 
-  <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" >
-
-    <!--segment 1 content-->
-    <swiper-slide value="1">
-      <div class="card">
-      
+    <swiper-slide *ngFor="let segment of segments" [value]="segment.value">
+      <div class="parent">
+        <div *ngFor="let card of segment.cards">
+          <ion-card>
+            <div class="card" [routerLink]="card.routerLink">
+              <img [src]="card.image" alt="">
+              <p>{{ card.title }}</p>
+            </div>
+          </ion-card> 
+        </div>
       </div>
     </swiper-slide>
 
-    <!--segment 2 content-->
-    <swiper-slide value="2">
-      <div class="card">
-  
-      </div>
-    </swiper-slide>
-
-    
   </swiper-container>
 </ion-content>

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { FormGroup, FormControl, Validators, FormGroupDirective } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormGroupDirective, FormArray } from '@angular/forms';
 import { FirstAidInfo } from 'src/app/services/first-aid/firstaid';
 import { FirstaidService } from 'src/app/services/first-aid/firstaid.service';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { uploadBytes } from '@angular/fire/storage';
 import { AlertController,LoadingController } from '@ionic/angular';
+
 @Component({
   selector: 'app-firstaid-update',
   templateUrl: './firstaid-update.page.html',
@@ -41,28 +42,53 @@ export class FirstaidUpdatePage implements OnInit {
     private loadingController:LoadingController,
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-
-    this.sub1 = this.infoService.getFirstAidInfoById(id)
-    .subscribe(info => {
+  
+    // Initialize the form first
+    this.updateInfoForm = new FormGroup({
+      'name': new FormControl('', Validators.required),
+      'photourl': new FormControl(''),
+      'description': new FormArray([]),
+      'introduction': new FormControl(''),
+      'content': new FormControl(''),
+      'cause': new FormControl(''),
+      // add more fields here 
+    });
+  
+    // Subscribe to getFirstAidInfoById
+    this.sub1 = this.infoService.getFirstAidInfoById(id).subscribe(info => {
       if (!info) {
-        this.router.navigate(['/tabs/tabs/firstaid-home']);
+        this.router.navigate(['/home']);
       } else {
         this.info = info;
-
-        this.updateInfoForm = new FormGroup({
-          'name': new FormControl(this.info.name),
-          'description': new FormControl(this.info.description),
-          'photourl': new FormControl(this.info.photourl)
+  
+        // Initialize the description FormArray with existing values
+        const descriptionArray = this.updateInfoForm.get('description') as FormArray;
+        if (this.info.description) {
+          this.info.description.forEach((desc: any) => {
+            descriptionArray.push(
+              new FormGroup({
+                'content': new FormControl(desc.content),
+                // add more fields here
+              })
+            );
+          });
+        }
+       
+  
+        // Set values for other form controls
+        this.updateInfoForm.patchValue({
+          'name': this.info.name,
+          'photourl': this.info.photourl,
+          'introduction':this.info.introduction,
+          'cause': this.info.cause
+          // add more fields here 
         });
-
-        this.sub2 = this.updateInfoForm.valueChanges.subscribe(values => {
-          this.formIsEdited = true;
-        })
       }
     });
   }
+  
 
   cancel(){
     this.router.navigate(['/firstaid-details', this.info.id]);
@@ -90,6 +116,7 @@ export class FirstaidUpdatePage implements OnInit {
             await loading.present();
 
             try {
+              this.addDescription();
               this.updateForm.onSubmit(undefined);
               await new Promise((resolve) => setTimeout(resolve, 500));
               await loading.dismiss();
@@ -106,11 +133,29 @@ export class FirstaidUpdatePage implements OnInit {
     await alert.present();
   }
 
-  updateInfo(values: any) {
+  updateInfo(values:any) {
     values.name = values.name.toLowerCase();
-    // copy all the form values into the Info to be updated
-    let updatedInfo: FirstAidInfo = { id: this.info.id, ...values };
-    this.infoService.updateFirstAidInfo(updatedInfo);
+    // Extract description from the FormArray
+    const description = this.updateInfoForm.value.description.map((desc: any) => ({
+      content: desc.content
+      //add
+    }));
+  
+    // Create the FirstAidInfo object with the 'id'
+    let updatedInfo: FirstAidInfo = {
+      id: this.info.id,
+      name: this.updateInfoForm.value.name,
+      description: description,
+      photourl: this.updateInfoForm.value.photourl,
+      introduction:this.updateInfoForm.value.introduction,
+      cause:this.updateInfoForm.value.cause
+    };
+  
+    // Call the service to updateFirstAidInfo
+    this.infoService.updateFirstAidInfo(updatedInfo).then(() => {
+      console.log('Info updated successfully.');  // Optional: Add a success log
+    })
+    .catch(error => console.error('Error updating info:', error));
   }
 
   async deleteInfo(infoId: string) {
@@ -139,8 +184,13 @@ export class FirstaidUpdatePage implements OnInit {
     await alert.present();
   }
   ngOnDestroy() {
-    this.sub1.unsubscribe();
-    this.sub2.unsubscribe();
+    if (this.sub1) {
+      this.sub1.unsubscribe();
+    }
+  
+    if (this.sub2) {
+      this.sub2.unsubscribe();
+    }
   }
 
   async openCamera() {
@@ -227,6 +277,45 @@ export class FirstaidUpdatePage implements OnInit {
         event.preventDefault();
       }
     }
+  }
+}
+
+addDescription() {
+  const descriptionArray = this.updateInfoForm.get('description') as FormArray;
+
+  
+  const contentValue = this.updateInfoForm.get('content').value;
+
+  if ( contentValue){
+    descriptionArray.push(
+      new FormGroup({
+        
+        'content': new FormControl(contentValue)
+        //add more fields here
+      })
+    );
+  }
+  // Add a new FormGroup to the FormArray with the values from the main form
+  
+    // Reset the values of title and content in the main form(can add more fields)
+    this.updateInfoForm.patchValue({
+      'content': ''
+    });
+
+  console.log(this.updateInfoForm.value);
+  
+}
+
+
+get descriptionControls() {
+  return (this.updateInfoForm.get('description') as FormArray).controls as FormGroup[];
+}
+ // Delete a 'use' at the specified index
+ deletedesc(index: number) {
+  const usesArray = this.updateInfoForm.get('description') as FormArray;
+
+  if (index >= 0 && index < usesArray.length) {
+    usesArray.removeAt(index);
   }
 }
 }

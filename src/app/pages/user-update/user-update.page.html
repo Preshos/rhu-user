@@ -1,0 +1,40 @@
+<ion-content [fullscreen]="true" *ngIf="user" >
+
+  <div class="top">
+
+    <img class="back" (click)="back()" src="/assets/icon/back.png" alt="">
+
+    <div class="profile">
+      <img [src]="profileForm.get('photourl')?.value || user.photourl " *ngIf="profileForm.get('photourl').value || user.photourl">
+        <button (click)="openCamera()">
+          <ng-lottie [options]="option"></ng-lottie> 
+          Upload Photo
+        </button>
+      </div>
+    </div>
+    <br>
+
+  <form [formGroup]="profileForm"  #updateForm="ngForm" *ngIf="user">  
+  <div class="details">
+    <div class="card">
+      <p class="label">Basic Information </p>
+      <p class="title"> First Name    : <input type="text" formControlName="firstname"> </p>
+      <p class="title"> Middle Initial: <input type="text" formControlName="midname"> </p>
+      <p class="title"> Last Name     : <input type="text" formControlName="lastname"> </p>
+      <p class="title"> Age           : <input type="text" formControlName="age"> </p>
+      <p class="title"> Gender        : <input type="text" formControlName="gender">  </p>
+      <p class="title"> Phone         : <input type="text" formControlName="phone"> </p>
+      <p class="label">Address</p>
+      <p class="title"> Street        : <input type="text" formControlName="street"> </p>
+      <p class="title"> Barangay      : <input type="text" formControlName="brgy"> </p>
+      <p class="title"> City          : <input type="text" formControlName="city"> </p>
+      <p class="title"> Province      : <input type="text" formControlName="province"> </p>
+    </div>
+  </div>
+</form>
+  
+
+<button (click)="submitForm()"> save</button>
+  
+</ion-content>
+

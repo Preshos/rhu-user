@@ -2,92 +2,94 @@
   <ion-toolbar>
     <ion-title class="title">Update {{info.name}}</ion-title>
     <ion-buttons slot="start">
-      <ion-button color="primary" (click)="cancel()">
-        Cancel
-      </ion-button>
+      <img (click)="cancel()" src="/assets/icon/back.png" alt="">
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button strong="true" color="primary" (click)="submitForm()">
-        Done
-      </ion-button>
+      <img (click)="submitForm()" src="/assets/icon/done.png" alt="">
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" *ngIf="info" >
 
+  <br>
   <div class="image-container">
     <ng-container *ngIf="!updateInfoForm.get('photourl').value">
       <ng-lottie [options]="{ path: 'assets/json/placeholder_herb.json' }"></ng-lottie>
     </ng-container>
     <img [src]="updateInfoForm.get('photourl')?.value || info.photourl " *ngIf="updateInfoForm.get('photourl').value || info.photourl">
   </div>
-
+  
+  <br>
   <div class="button-container">
     <button (click)="openCamera()">
       <ng-lottie [options]="option"></ng-lottie> 
       Upload Photo
     </button>
   </div>
-
+  
 
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
     <ion-segment-button value="1" (click)="selectSegment(1)">
-      <ion-label class="segment-text">Info</ion-label>
+      <img src="/assets/icon/info.png" alt="">
     </ion-segment-button>
     <ion-segment-button value="2" (click)="selectSegment(2)">
-      <ion-label class="segment-text">Techniques</ion-label>
+      <img src="/assets/icon/do.png" alt="">
     </ion-segment-button>
-    <!-- <ion-segment-button value="3" (click)="selectSegment(3)">
-      <ion-label class="segment-text">Uses</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="4" (click)="selectSegment(4)">
-      <ion-label class="segment-text">Precautions</ion-label>
-    </ion-segment-button> -->
   </ion-segment>
 
 
   <form [formGroup]="updateInfoForm" #updateForm="ngForm" (ngSubmit)="updateInfo(updateInfoForm.value)" *ngIf="info">
     
-    <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+    <swiper-container #swiper (slidechange)="slideDidChange()" class="swiper" 
+    auto-height="true" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
 
-       <!--segment 1 content-->
+
+      <!--segment 1 content-->
       <swiper-slide value="1">
         <div class="card">
           <p>Name</p>
-            <textarea type="text" class="card-text" autosize [minRows]="1" formControlName="name"></textarea>
-          <p>Description</p>
-            <textarea 
-            class="card-text" 
-            formControlName="description" 
-            autosize
-            [minRows]="6"
-            ></textarea>
+          <textarea 
+          class="card-text" 
+          formControlName="name" 
+          autosize
+          [minRows]="1"
+          ></textarea>
+        </div>
+
+        <div class="card">
+          <p>Introduction</p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="introduction"></textarea>
+        </div>
+
+        <div class="card">
+          <p>Cause</p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="cause"></textarea>
         </div>
       </swiper-slide>
 
-       <!--segment 2 content-->
       <swiper-slide value="2">
-        <div class="card">
-          <p>Description</p>
-          <textarea 
-          class="card-text" 
-          formControlName="description" 
-          autosize
-          [minRows]="6"
-          ></textarea>
+        <!-- Display subsequent cards when there are existing descriptions -->
+        <div [formGroup]="description" class="card" *ngFor="let description of descriptionControls; let i = index">
+            <p>Step: {{i + 1}}</p>
+            <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
+            <button type="button" (click)="deletedesc(i)">Delete Description</button>
         </div>
+        
+        <!-- Display the initial card -->
+        <div class="card">
+          <p>Step: </p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
+        </div>
+        <button type="button" (click)="addDescription()">Add Description</button>
       </swiper-slide>
+
+       
 
     </swiper-container>
   </form>
+  <div class="button-container">
+    <button (click)="deleteInfo(info.id)">>Delete this info</button>
+  </div>
 </ion-content>
-<ion-footer>
-  <ion-toolbar>
-    <ion-item button="true" detail="false" (click)="deleteInfo(info.id)">
-      <ion-label color="danger">
-        Delete Item
-      </ion-label>
-    </ion-item>
-  </ion-toolbar>
-</ion-footer>
+

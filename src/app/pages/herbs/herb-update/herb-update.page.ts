@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { HerbinfoService } from 'src/app/services/herbs/herbinfo.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HerbInfo } from 'src/app/services/herbs/herb';
 import { FormGroup, FormControl, Validators, FormGroupDirective, FormArray } from '@angular/forms';
@@ -10,7 +9,8 @@ import { AlertController,LoadingController } from '@ionic/angular';
 import Swiper from 'swiper';
 import { uploadBytes } from '@angular/fire/storage';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { HerbinfoService } from 'src/app/services/herbs/herbinfo.service';
+import { ActionSheetController } from '@ionic/angular';
 @Component({
   selector: 'app-herb-update',
   templateUrl: './herb-update.page.html',
@@ -41,35 +41,60 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
     private router: Router,
     private alertController: AlertController,
     private loadingController:LoadingController,
+    private actionSheetController: ActionSheetController
   ) { }
 
   ngOnInit() {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-
-    this.sub1 = this.dataService.getHerbInfoById(id)
-    .subscribe(herb => {
+  
+    // Initialize the form first
+    this.updateHerbForm = new FormGroup({
+      'herbname': new FormControl('', Validators.required),
+      'other_name': new FormControl(''),
+      'photourl': new FormControl(''),
+      'description':new FormControl(''),
+      'title': new FormControl(''),
+      'content': new FormControl(''),
+      'uses': new FormArray([]),
+      'benefits':new FormControl(''),
+      'beware':new FormControl(''),
+      'procedure': new FormControl ('')
+      // add more fields here 
+    });
+  
+    // Subscribe to getFirstAidherbById
+    this.sub1 = this.dataService.getHerbInfoById(id).subscribe(herb => {
       if (!herb) {
-        this.router.navigate(['/tabs/tabs/herb-home']);
+        this.router.navigate(['/home']);
       } else {
         this.herb = herb;
-
-        this.updateHerbForm = new FormGroup({
-          'herbname': new FormControl(this.herb.herbname),
-          'description': new FormControl(this.herb.description),
-          'uses': new FormControl(this.herb.uses),
-          'scientificname': new FormControl(this.herb.scientificname),
-          'photourl': new FormControl(this.herb.photourl),
-          'desc': new FormControl(''),
-          'title_desc': new FormControl(''),
-          'precautions': new FormArray([]),
-          'title': new FormArray([]),
+  
+        // Initialize the description FormArray with existing values
+        const descriptionArray = this.updateHerbForm.get('uses') as FormArray;
+         // Check if 'herb.uses' is defined before iterating
+    if (this.herb.uses) {
+      this.herb.uses.forEach((desc: any) => {
+        descriptionArray.push(
+          new FormGroup({
+            'title': new FormControl(desc.title),
+            'content': new FormControl(desc.content),
+            'procedure': new FormControl(desc.procedure),
+            // add more fields here
+          })
+        );
+      });
+    }
+  
+        // Set values for other form controls
+        this.updateHerbForm.patchValue({
+          'herbname': this.herb.herbname,
+          'photourl': this.herb.photourl,
+          'description': this.herb.description,
+          'benefits': this.herb.benefits,
+          'other_name':this.herb.other_name,
+          'beware': this.herb.beware,
+          // add more fields here 
         });
-
-        this.getcurrentdata(this.herb.precautions,this.herb.title);
-
-        this.sub2 = this.updateHerbForm.valueChanges.subscribe(values => {
-          this.formIsEdited = true;
-        })
       }
     });
   }
@@ -101,9 +126,8 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
             await loading.present();
   
             try {
-              this.addPrecaution();
-              // This will show the updated info
-              console.log(this.updateHerbForm.value);
+              this.addDescription();
+            
               this.updateForm.onSubmit(undefined);
               await new Promise((resolve) => setTimeout(resolve, 500));
               await loading.dismiss();
@@ -123,14 +147,35 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
   
 
   updateInfo(values: any) {
-    // convert the updated name into lowercase
     values.herbname = values.herbname.toLowerCase();
-    // copy all the form values to be updated
-    let updatedInfo: HerbInfo = { id: this.herb.id, ...values };
-    this.dataService.updateHerbInfo(updatedInfo);
+    // Extract description from the FormArray
+    const uses = this.updateHerbForm.value.uses.map((desc: any) => ({
+      title: desc.title,
+      content: desc.content,
+      procedure:desc.procedure
+      //add
+    }));
+  
+    // Create the FirstAidInfo object with the 'id'
+    let updatedInfo: HerbInfo = {
+      id: this.herb.id,
+      herbname: this.updateHerbForm.value.herbname,
+      description: this.updateHerbForm.value.description,
+      photourl: this.updateHerbForm.value.photourl,
+      benefits: this.updateHerbForm.value.benefits,
+      other_name: this.updateHerbForm.value.other_name,
+      beware: this.updateHerbForm.value.beware,
+      uses:uses 
+    };
+  
+    // Call the service to updateFirstAidInfo
+    this.dataService.updateHerbInfo(updatedInfo).then(() => {
+      console.log('Info updated successfully.');  // Optional: Add a success log
+    })
+    .catch(error => console.error('Error updating info:', error));
   }
 
- async deleteInfo(infoId: string) {
+ async deleteherb(herbId: string) {
     const alert = await this.alertController.create({
       header: 'Confirm Deletion',
       message: 'Are you sure you want to delete this?',
@@ -146,7 +191,7 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
           text: 'Delete',
           handler: () => {
             // User clicked the "Delete" button, proceed with deletion
-            this.dataService.deleteHerbInfo(infoId).then(
+            this.dataService.deleteHerbInfo(herbId).then(
               res => this.router.navigate(['/tabs/tabs/herb-home'])
             );
           }
@@ -158,8 +203,14 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub1.unsubscribe();
-    this.sub2.unsubscribe();
+    if (this.sub1) {
+      this.sub1.unsubscribe();
+    }
+  
+    // Remove the following block if not needed
+    if (this.sub2) {
+      this.sub2.unsubscribe();
+    }
   }
   
   
@@ -275,53 +326,71 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
   }
 }
 
-addPrecaution() {
-  const desc = this.updateHerbForm.get('desc').value;
-  const title_desc = this.updateHerbForm.get('title_desc').value;
+addDescription() {
+  const descriptionArray = this.updateHerbForm.get('uses') as FormArray;
 
-  if (desc.trim() !== '' && title_desc.trim() !== '') {
-    const titleFormArray = this.updateHerbForm.get('title') as FormArray;
-    titleFormArray.push(new FormControl('')); // Push a new FormControl first
-    titleFormArray.at(titleFormArray.length - 1).setValue(title_desc); // Set the value
-  
-    
-    const precautionsFormArray = this.updateHerbForm.get('precautions') as FormArray;
-    precautionsFormArray.push(new FormControl('')); // Push a new FormControl first
-    precautionsFormArray.at(precautionsFormArray.length - 1).setValue(desc); // Set the value
+  // get the values from the main form
+  const titleValue = this.updateHerbForm.get('title').value;
+  const contentValue = this.updateHerbForm.get('content').value;
+  const procedureValue = this.updateHerbForm.get('procedure').value;
 
-    this.updateHerbForm.get('desc').setValue('');
-    this.updateHerbForm.get('title_desc').setValue('');
-    
+  // Check if both title and content values are not empty
+  if (titleValue && contentValue) {
+    // Add a new FormGroup to the FormArray with the values from the main form
+    descriptionArray.push(
+      new FormGroup({
+        'title': new FormControl(titleValue),
+        'content': new FormControl(contentValue),
+        'procedure': new FormControl(procedureValue)
+        //add more fields here
+      })
+    );
+
+    // Reset the values of title and content in the main form (can add more fields)
+    this.updateHerbForm.patchValue({
+      'title': '',
+      'content': '',
+      'procedure': ''
+    });
   }
 }
 
-  getcurrentdata(precautions: string[] , title:string[]) {
 
-    const titleFormArray = this.updateHerbForm.get('title') as FormArray;
-    title.forEach((title) => {
-      titleFormArray.push(new FormControl(title));
-      
-    });
 
-    const precautionsFormArray = this.updateHerbForm.get('precautions') as FormArray;
-    precautions.forEach((precaution) => {
-      precautionsFormArray.push(new FormControl(precaution));
-    });
+get descriptionControls() {
+  return (this.updateHerbForm.get('uses') as FormArray).controls as FormGroup[];
+}
+
+  // Delete a 'use' at the specified index
+deleteDesc(index: number) {
+  const usesArray = this.updateHerbForm.get('uses') as FormArray;
+
+  if (index >= 0 && index < usesArray.length) {
+    usesArray.removeAt(index);
   }
+}
 
-  deletePrecaution(index: number) {
-    const precautions = this.updateHerbForm.get('precautions') as FormArray;
-    console.log('Precautions Length:', precautions.length);
-    
-    if (index >= 0 && index < precautions.length) {
-      precautions.removeAt(index);
-  
-      const title = this.updateHerbForm.get('title') as FormArray;
-      console.log('Title Length:', title.length);
-      if (index < title.length) {
-        title.removeAt(index);
-      }
-    }
-  }
+async deleteAction(index: number) {
+  const actionSheet = await this.actionSheetController.create({
+    header: 'Confirm Deletion',
+    buttons: [
+      {
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.deleteDesc(index);
+        },
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        icon: 'close',
+      },
+    ],
+  });
+
+  await actionSheet.present();
+}
   
 }

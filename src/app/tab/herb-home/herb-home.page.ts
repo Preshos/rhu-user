@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HerbInfo } from 'src/app/services/herbs/herb';
 import { HerbinfoService } from 'src/app/services/herbs/herbinfo.service';
 import { HerbCreatePage } from 'src/app/pages/herbs/herb-create/herb-create.page';
 import { ModalController, IonRouterOutlet } from '@ionic/angular';
-import { Observable, debounceTime, of , distinctUntilChanged, take} from 'rxjs';
+import { Observable, debounceTime, of , distinctUntilChanged, take, timer} from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
+import Swiper from 'swiper';
 @Component({
   selector: 'app-herb-home',
   templateUrl: './herb-home.page.html',
@@ -22,7 +23,16 @@ export class HerbHomePage {
   public firstaid: Observable<HerbInfo[]>;
   public searchResults: Observable<HerbInfo[]>;
   public searchTerm: string = '';
-  isAdmin: boolean;
+  isAdmin: boolean = false;
+  @ViewChild('swiperContainer') swiperContainer: any;
+  public loadingData: boolean = false;
+
+  pictures = [ 
+    { url : '/assets/backgrounds/herbs.jpg'},
+    { url : '/assets/backgrounds/herbal1.jpg'},
+    { url : '/assets/backgrounds/herbal2.jpg'},
+    { url : '/assets/backgrounds/herbal3.jpg'},
+  ]
   constructor(
     private dataService: HerbinfoService,
     public modalController: ModalController,
@@ -74,19 +84,42 @@ export class HerbHomePage {
       .subscribe((isAdmin) => {
         this.isAdmin = isAdmin;
       });
+
+      this.loadingData = true;
+  
+      this.dataService.getHerbInfoAlphabetically()
+      .pipe(
+        debounceTime(400),
+      )
+      .subscribe(firstaid => {
+        this.firstaid = of(firstaid);
+        timer(1000).subscribe(() => {
+          this.loadingData = false;
+          this.cdr.detectChanges();
+        });
+      });
   }
   
 
    doRefresh(event: any) {
+    this.authService.isAdmin$;
+    this.loadingData = true;
     this.dataService.getHerbInfoAlphabetically()
       .pipe(
-        debounceTime(2000) // Adjust the time (in milliseconds) based on your requirements
+        debounceTime(400),
       )
-      .subscribe(herb => {
-        this.firstaid = of(herb);
-        this.cdr.detectChanges();
-        event.target.complete();
+      .subscribe(firstaid => {
+        this.firstaid = of(firstaid);
+        timer(1000).subscribe(() => {
+          this.loadingData = false;
+          this.cdr.detectChanges();
+          event.target.complete();
+        });
       });
+  }
+  
+  trackByInfo(index: number, item: HerbInfo): string {
+    return item.id;
   }
 
 }

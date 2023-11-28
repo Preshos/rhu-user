@@ -34,6 +34,7 @@
     "@ionic/storage-angular": "^4.0.0",
     "@ngneat/hot-toast": "^6.0.1",
     "@ngneat/until-destroy": "^10.0.0",
+    "html2pdf.js": "^0.10.1",
     "ionicons": "^7.0.0",
     "lord-icon-element": "^4.1.2",
     "lottie-web": "^5.12.2",

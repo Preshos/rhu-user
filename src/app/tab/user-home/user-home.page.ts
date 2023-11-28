@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Subscription, tap } from 'rxjs';
+import { Subscription, take, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
@@ -16,15 +16,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class UserHomePage implements OnInit {
 
-  
+  isUserOnline: boolean;
   isAdmin: boolean;
   totalUsers: number;
   user = this.userinfoservice.currentUserProfile$;
 
-  profileForm = this.fb.group({
-    uid: [''],
-    displayname:['']
-  });
+ 
   
   sub1: Subscription;
   constructor(
@@ -34,7 +31,8 @@ export class UserHomePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: NonNullableFormBuilder,
     private alert : AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private authService:AuthService
   ) {}
 
   async logout() {
@@ -48,37 +46,38 @@ export class UserHomePage implements OnInit {
         },
         {
           text: 'Yes',
-          handler: () => {
-            // Perform the logout action when the Logout button is clicked
-            this.auth.logout().subscribe(async () => {
-              const loading = await this.loadingCtrl.create();
-
+          handler: async () => {
+            const user = await this.authService.currenUser$.pipe(take(1)).toPromise();
+  
+            if (user) {
+              // Show loading while checking and updating user status
+              const loading = await this.loadingCtrl.create({ message: 'Logging out...' });
               loading.present();
-
-              setTimeout(() => {
-                loading.dismiss();
-
-                this.router.navigate(['/login']);
+  
+              // Update user status to offline on logout
+              await this.userinfoservice.updateUserStatusOffline(user.uid);
+              // Logout
+              await this.auth.logout();
+  
+                // Dismiss loading spinner after a delay
+                setTimeout(() => {
+                  loading.dismiss();
+                  this.router.navigate(['/login']);
               }, 1300);
-            });
+            }
           },
-        }
+        },
       ],
-      cssClass : 'custom-logout'
+      cssClass: 'custom-logout',
     });
-
+  
     await alert.present();
   }
-
+  
   back(){
 
   }
   ngOnInit() {
-    this.userinfoservice.currentUserProfile$
-      .pipe(untilDestroyed(this), tap(console.log))
-      .subscribe((user) => {
-        this.profileForm.patchValue({ ...user });
-      });
 
       this.auth.isAdmin$.subscribe((isAdmin) => {
         this.isAdmin = isAdmin;
@@ -87,8 +86,15 @@ export class UserHomePage implements OnInit {
       this.userinfoservice.getTotalUsersCount().subscribe(count => {
         this.totalUsers = count;
       });
+
+      this.userinfoservice.currentUserProfile$.subscribe((user) => {
+        this.isUserOnline = user?.isOnline;
+      });
   }
+
   users(){
     this.router.navigate(['/user']);
   }
+
+  
 }

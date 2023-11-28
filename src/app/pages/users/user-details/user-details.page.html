@@ -1,47 +1,28 @@
-<ion-header [translucent]="true" class="ion-no-border">
-
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-</ion-header>
-
 <ion-content [fullscreen]="true" *ngIf="user" >
-  <ion-row>
-    <ion-col class="content-col">
+    <div class="top">
+      <img class="back" (click)="back()" src="/assets/icon/back.png" alt="">
+      <div class="profile">
+        <img  [src]="user.photourl ?? '/assets/avatar.png'" alt="">
+        <p class="profile-name">{{ user.firstname }}</p>
+        <p class="profile-email">{{ user.email }}</p>
+      </div>
+    </div>  
       
-      <img [src]="user.photourl ?? '/assets/placeholder.jpg'">
-      <ion-text color="dark">
-        <h2 class="user-name">{{user.displayname}}</h2>
-      </ion-text>
-
-        <ion-card>
-          <ion-item>
-            <ion-label position="stacked">Description </ion-label>
-            <p>{{user.email}}</p>
-          </ion-item>
-        </ion-card>
-
-        <ion-card>
-          <ion-item>
-            <ion-label position="stacked">Description </ion-label>
-            <p>{{user.email}}</p>
-          </ion-item>
-        </ion-card>
-        <ion-card>
-          <ion-item>
-            <ion-label position="stacked">Description </ion-label>
-            <p>{{user.email}}</p>
-          </ion-item>
-        </ion-card>
-        <ion-card>
-          <ion-item>
-            <ion-label position="stacked">Description </ion-label>
-            <p>{{user.email}}</p>
-          </ion-item>
-        </ion-card>
-    </ion-col>
-  </ion-row>
+    <div class="details">
+      
+      <div class="card">
+        <p class="label">Basic Information </p>
+        <p class="title"> Full Name: <span class="info" >{{user.firstname}} {{user.midname}} {{user.lastname}}</span> </p>
+        <p class="title"> Age      : <span class="info" >{{user.age}}</span></p>
+        <p class="title"> Gender   : <span class="info" >{{user.gender}}</span> </p>
+        <p class="title"> Email    : <span class="info" >{{user.email}}</span> </p>
+        <p class="title"> Phone    : <span class="info" >{{user.phone}}</span> </p>
+        <p class="label">Address</p>
+        <p class="title"> Street   : <span class="info" >{{user.street}}</span> </p>
+        <p class="title"> Barangay : <span class="info" >{{user.brgy}}</span> </p>
+        <p class="title"> City     : <span class="info" >{{user.city}}</span> </p>
+        <p class="title"> Province : <span class="info" >{{user.province}}</span> </p>
+      </div>
+    </div>
+    
 </ion-content>
