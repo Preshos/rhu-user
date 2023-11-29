@@ -11,9 +11,16 @@ import { Onboard1Component } from 'src/app/components/onboard1/onboard1.componen
 import { Onboard2Component } from 'src/app/components/onboard2/onboard2.component';
 import { Onboard3Component } from 'src/app/components/onboard3/onboard3.component';
 
+import { LottieModule } from 'ngx-lottie';
+import player from 'lottie-web'
+
+export function playerfactory(){
+  return player
+}
 @NgModule({
   imports: [
     CommonModule,
+    LottieModule.forRoot({player:playerfactory}),
     FormsModule,
     IonicModule,
     LandingpagePageRoutingModule

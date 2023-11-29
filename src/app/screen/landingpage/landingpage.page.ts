@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Swiper } from 'swiper';
+import { AnimationOptions } from 'ngx-lottie';
 @Component({
   selector: 'app-landingpage',
   templateUrl: './landingpage.page.html',
@@ -27,9 +28,16 @@ export class LandingpagePage implements OnInit {
   ngOnInit() {
   }
 
+  option: AnimationOptions = {path : '/assets/landing page pictures/learning.json'}
+  option1: AnimationOptions = {path : '/assets/landing page pictures/herbs.json'}
+  option2: AnimationOptions = {path : '/assets/landing page pictures/firstaid_phone.json'}
+  grow: AnimationOptions = {path : '/assets/landing page pictures/grow_plant.json'}
+  
+
   titles = [
-    { url:('/assets/landing page pictures/hand-heart.jpg') , message : "🚑 Learn essential life-saving techniques. 🚑"},
-    { url:('/assets/landing page pictures/hand-plant.jpg') , message : "🌱 Discover the Healing Power of Nature! 🌱" },
-    { url:('/assets/landing page pictures/hand-bulb.jpg')  , message : "💡 Quick tips for easy recall during emergencies💡" },
+    { options : this.option2, url:('/assets/landing page pictures/hand-heart.jpg') , message : "Learn essential life-saving techniques."},
+    { options : this.option1, url:('/assets/landing page pictures/hand-plant.jpg') , message : "Discover the Healing Power of Nature!" },
+    { options : this.option ,url:('/assets/landing page pictures/hand-bulb.jpg')  , message : " Quick tips for easy recall during emergencies" },
   ]
+
 }

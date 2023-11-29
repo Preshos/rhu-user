@@ -1,9 +1,9 @@
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, NonNullableFormBuilder } from '@angular/forms';
 import { HotToastService } from '@ngneat/hot-toast';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription, switchMap, tap } from 'rxjs';
+import { Subscription, debounceTime, switchMap, tap, timer } from 'rxjs';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { ProfileUser } from 'src/app/services/users/user';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, } from "firebase/storage";
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { uploadBytes } from '@angular/fire/storage';
+import { ChangeDetectorRef } from '@angular/core';
 @UntilDestroy()
 @Component({
   selector: 'app-user-update',
@@ -25,14 +26,17 @@ export class UserUpdatePage implements OnInit {
   updateInfoForm: FormGroup;
   formIsEdited: boolean = false;
   isAdmin: boolean;
+  selectedPhotoPath: string;
+  
 
+  //to make the form not null
   profileForm = this.fb.group({
     uid: [''],
     firstname: [''] , 
     midname: [''],
     lastname: [''],
-    age: [''],
-    phone: [''],
+    age: [],
+    phone: [],
     email: [''],
     gender: [''],
     street: [''],
@@ -44,6 +48,7 @@ export class UserUpdatePage implements OnInit {
   }); 
 
   @ViewChild('updateForm') updateForm: FormGroupDirective;
+  @ViewChild('dynamicText', { read: ElementRef }) dynamicText: ElementRef;
 
   constructor(private activatedRoute: ActivatedRoute,
     private userservice : UserinfoService,
@@ -52,7 +57,8 @@ export class UserUpdatePage implements OnInit {
     private loadingController:LoadingController,
     private fb: NonNullableFormBuilder,
     private toastcontrol:ToastController,
-    private auth:AuthService
+    private auth:AuthService,
+    private cdr : ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -168,7 +174,11 @@ async submitForm() {
 
 
 back(){
-  this.router.navigate(['tabs/tabs/user-home'])
+  this.router.navigate(['tabs/tabs/user-home']).then(()=>{
+    this.displaySelectedPhoto(''),
+    this.profileForm;
+  });
+
 }
 
 async openCamera() {
@@ -176,14 +186,14 @@ async openCamera() {
     const image = await Camera.getPhoto({
       quality: 100,
       allowEditing: false,
-      resultType: CameraResultType.Uri, // Capture the image URI
+      resultType: CameraResultType.Uri,
       source: CameraSource.Prompt
     });
 
-    
-    const fileName = new Date().getTime() + '.jpg';
+    // Display the selected photo immediately
+    this.displaySelectedPhoto(image.webPath);
 
-    // the storage path for the image
+    const fileName = new Date().getTime() + '.jpg';
     const filePath = 'user_photos/' + fileName;
     const storage = getStorage();
     const storageRef = ref(storage, filePath);
@@ -196,24 +206,38 @@ async openCamera() {
     const uploadTask = uploadBytes(storageRef, blob);
 
     uploadTask
-      .then((snapshot) => {
+      .then(async (snapshot) => {
         // Image uploaded successfully
+        const downloadURL = await getDownloadURL(storageRef);
+        // Update your form field or handle the download URL as needed
+        this.profileForm.patchValue({ photourl: downloadURL });
       })
       .catch((error) => {
         console.error('Image upload error:', error);
-      })
-      .then(async () => {
-        try {
-          // Upload complete
-          const downloadURL = await getDownloadURL(storageRef);
-          // Update your form field or handle the download URL as needed
-          this.profileForm.patchValue({ photourl: downloadURL });
-        } catch (error) {
-          console.error('Download URL error:', error);
-        }
       });
   } catch (error) {
     console.error('Camera error:', error);
   }
 }
+
+
+// Add a method to display the selected photo
+displaySelectedPhoto(photoPath: string) {
+  this.selectedPhotoPath = photoPath;
 }
+
+doRefresh(event: any) {
+
+  this.userservice.currentUserProfile$
+    .subscribe((user) => {
+        this.profileForm.patchValue({ ...user });
+        timer(500).subscribe(() => {
+          this.cdr.detectChanges();
+          event.target.complete();
+        });
+      });
+  }
+}
+
+
+

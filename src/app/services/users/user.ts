@@ -5,14 +5,14 @@ export interface ProfileUser {
     midname?:string
     lastname?: string;
     displayname?: string;
-    phone?: string;
+    phone?: number;
     address?: string;
     city?:string;
     brgy?:string;
     street?:string;
     province?:string;
     photourl?: string;
-    age?: string;
+    age?: number;
     gender?:string;
     password?: string;
     emailverified?: boolean;

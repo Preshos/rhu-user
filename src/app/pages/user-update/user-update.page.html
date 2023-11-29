@@ -1,40 +1,152 @@
-<ion-content [fullscreen]="true" *ngIf="user" >
+<ion-content [fullscreen]="true" *ngIf="user" (ionRefresh)="doRefresh($event)">
 
+  <ion-refresher slot="fixed">
+    <ion-refresher-content   
+    refreshingSpinner="circles" >
+    </ion-refresher-content>
+  </ion-refresher>
   <div class="top">
 
-    <img class="back" (click)="back()" src="/assets/icon/back.png" alt="">
+    <img class="back" (click)="back()" src="/assets/icon/iback.png" alt="">
 
     <div class="profile">
-      <img [src]="profileForm.get('photourl')?.value || user.photourl " *ngIf="profileForm.get('photourl').value || user.photourl">
-        <button (click)="openCamera()">
-          <ng-lottie [options]="option"></ng-lottie> 
-          Upload Photo
-        </button>
-      </div>
+      <!-- || profileForm.get('photourl')?.value  -->
+      <img [src]="selectedPhotoPath || user.photourl" *ngIf="selectedPhotoPath || user.photourl">
+      <img  (click)="openCamera()" class="camera"src="/assets/icon/icam.png" alt="">
+    </div>
+    
     </div>
     <br>
 
   <form [formGroup]="profileForm"  #updateForm="ngForm" *ngIf="user">  
   <div class="details">
     <div class="card">
-      <p class="label">Basic Information </p>
-      <p class="title"> First Name    : <input type="text" formControlName="firstname"> </p>
-      <p class="title"> Middle Initial: <input type="text" formControlName="midname"> </p>
-      <p class="title"> Last Name     : <input type="text" formControlName="lastname"> </p>
-      <p class="title"> Age           : <input type="text" formControlName="age"> </p>
-      <p class="title"> Gender        : <input type="text" formControlName="gender">  </p>
-      <p class="title"> Phone         : <input type="text" formControlName="phone"> </p>
+      <p class="label-top"> Basic Information </p>
+      
+      <br>
+      <!-- firstname -->
+      <div class="form-control">
+        <input type="text" required=""  formControlName="firstname" autocomplete="false">
+        <label>
+            <span *ngFor="let char of ['F','i','r','s','t','','n','a','m','e']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+      <br>
+
+      <!-- midname-->
+      <div class="form-control">
+        <input type="text" required="" formControlName="midname">
+        <label>
+            <span *ngFor="let char of ['M','i','d','d','l','e','','I','n','i','t','i','a','l']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+      <br>
+
+      <!-- lastname -->
+        <div class="form-control">
+          <input type="text" required="" formControlName="lastname">
+          <label>
+            <span *ngFor="let char of ['L','a','s','t','', 'n','a','m','e']; let i = index" [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+          </label>
+        </div>
+      <br>
+
+      <!-- age -->
+      <div class="form-control">
+        <input type="number" required=""  formControlName="age">
+        <label>
+            <span *ngFor="let char of ['A','g','e']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+
+     <!-- Gender -->
+     <div class="gender">
+      <label class="title">Gender</label>
+      <br>
+      <div class="radio-input">
+        <input value="Male" name="gender" id="value-1" type="radio" formControlName="gender">
+        <label for="value-1">Male</label>
+        <input value="Female" name="gender" id="value-2" type="radio" formControlName="gender">
+        <label for="value-2">Female</label>
+      </div>
+     </div>
+     <br>
+     <!-- Phone -->
+     <div class="form-control">
+      <input type="tel" maxlength="11" formControlName="phone">
+      <label>
+          <span *ngFor="let char of ['P','h','o','n','e']; let i = index" 
+          [style.transition-delay]="i * 50 + 'ms'">
+            {{ char }}
+          </span>
+      </label>
+    </div>
+    <br>
       <p class="label">Address</p>
-      <p class="title"> Street        : <input type="text" formControlName="street"> </p>
-      <p class="title"> Barangay      : <input type="text" formControlName="brgy"> </p>
-      <p class="title"> City          : <input type="text" formControlName="city"> </p>
-      <p class="title"> Province      : <input type="text" formControlName="province"> </p>
+    <br>
+      <!-- street-->
+      <div class="form-control">
+        <input type="text" required="" formControlName="street">
+        <label>
+            <span *ngFor="let char of ['S','t','r','e','e','t']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+      <br>
+      <!-- brgy-->
+      <div class="form-control">
+        <input type="text" required="" formControlName="brgy">
+        <label>
+            <span *ngFor="let char of ['B','a','r','a','n','g','a','y']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+      <br>
+      <!-- city-->
+      <div class="form-control">
+        <input type="text" required="" formControlName="city">
+        <label>
+            <span *ngFor="let char of ['C','i','t','y']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+      <br>
+      <!-- province-->
+      <div class="form-control">
+        <input type="text" required="" formControlName="province">
+        <label>
+            <span *ngFor="let char of ['P','r','o','v','i','n','ce']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+      </div>
+
+      <ion-item (click)="submitForm()">
+        <ion-icon slot="start" name="log-out"></ion-icon>
+        <p>Save</p>
+        <ion-icon slot="end" name="chevron-forward"></ion-icon>
+      </ion-item>
     </div>
   </div>
 </form>
-  
-
-<button (click)="submitForm()"> save</button>
   
 </ion-content>
 

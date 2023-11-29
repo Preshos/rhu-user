@@ -15,7 +15,7 @@ export class SplashPage implements OnInit {
   constructor(private router:Router) {
     setTimeout(() => {
       this.router.navigateByUrl('/landingpage')
-    }, 1500);
+    }, 2500);
    }
 
   
