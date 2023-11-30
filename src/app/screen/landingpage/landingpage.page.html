@@ -1,27 +1,21 @@
 <ion-content>
-
-  <swiper-container #swiper
-    [loop]="true" 
-    [pagination]="true" 
-    pagination-clickable="true"
-    keyboard="true">
+  <swiper-container #swiper [pagination]="true" pagination-clickable="true" keyboard="true" (slidechange)="slideDidChange()">
     <swiper-slide *ngFor="let item of titles; let last = last; let i = index">
-
+      
       <div class="swiper_content">
-        <div class="lottie">
+        <div class="lottie" >
           <ng-lottie [options]="item.options"></ng-lottie>
         </div>
-      <p>{{item.message}}</p>
-      </div>
-
-      <div class="lottie-bg-1">
-        <ng-lottie *ngIf="i === titles.length - 2" [options]="grow"></ng-lottie>
-      </div>
-
-      <div class="lottie-bg-2">
-        <ng-lottie *ngIf="i === titles.length - 2" [options]="grow"></ng-lottie>
+        <p>{{ item.message }}</p>
       </div>
       
+      <!-- Show "grow" animation only on the second slide -->
+      <ng-container *ngFor="let j of [1]">
+        <div class="lottie-bg" [style.left.px]="25 * j" *ngIf="index === 1">
+          <ng-lottie [options]="grow"></ng-lottie>
+        </div>
+      </ng-container>
+
       <!-- Show button only on the last slide -->
       <button *ngIf="last" routerLink="/login">Get Started</button>
     </swiper-slide>

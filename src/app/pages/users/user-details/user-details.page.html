@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" *ngIf="user" >
     <div class="top">
-      <img class="back" (click)="back()" src="/assets/icon/back.png" alt="">
+      <img class="back" (click)="back()" src="/assets/icon/iback.png" alt="">
       <div class="profile">
         <img  [src]="user.photourl ?? '/assets/avatar.png'" alt="">
         <p class="profile-name">{{ user.firstname }}</p>
@@ -10,7 +10,8 @@
       
     <div class="details">
       <div class="card">
-        <p class="label">Basic Information </p>
+        <p class="label-top">Basic Information </p>
+        
         <p class="title"> Full Name: <span class="info" >{{user.firstname}} {{user.midname}} {{user.lastname}}</span> </p>
         <p class="title"> Age      : <span class="info" >{{user.age}}</span></p>
         <p class="title"> Gender   : <span class="info" >{{user.gender}}</span> </p>

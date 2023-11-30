@@ -11,7 +11,7 @@
 
     <div class="profile">
       <!-- || profileForm.get('photourl')?.value  -->
-      <img [src]="selectedPhotoPath || user.photourl" *ngIf="selectedPhotoPath || user.photourl">
+      <img [src]="selectedPhotoPath || user.photourl ?? '/assets/avatar.png'" *ngIf="selectedPhotoPath || user.photourl">
       <img  (click)="openCamera()" class="camera"src="/assets/icon/icam.png" alt="">
     </div>
     
@@ -139,12 +139,13 @@
         </label>
       </div>
 
-      <ion-item (click)="submitForm()">
-        <ion-icon slot="start" name="log-out"></ion-icon>
-        <p>Save</p>
-        <ion-icon slot="end" name="chevron-forward"></ion-icon>
-      </ion-item>
+
+      
     </div>
+    <ion-item (click)="submitForm()">
+      <ion-icon slot="start" name="checkmark-done-circle"></ion-icon>
+      <p>Save</p>
+    </ion-item>
   </div>
 </form>
   
