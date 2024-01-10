@@ -15,7 +15,6 @@ export interface ProfileUser {
     age?: number;
     gender?:string;
     password?: string;
-    emailverified?: boolean;
     isAdmin?: boolean;
     isOnline?: boolean;
   }

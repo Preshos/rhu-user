@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { WhatPageRoutingModule } from './what-routing.module';
+import { AboutPageRoutingModule } from './about-routing.module';
 
-import { WhatPage } from './what.page';
+import { AboutPage } from './about.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    WhatPageRoutingModule
+    AboutPageRoutingModule
   ],
-  declarations: [WhatPage]
+  declarations: [AboutPage]
 })
-export class WhatPageModule {}
+export class AboutPageModule {}

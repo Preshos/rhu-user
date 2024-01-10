@@ -127,13 +127,14 @@ export class HerbinfoService {
     const herbnameKeywords = this.extractKeywords(herb.herbname);
     const otherKeywords = this.extractKeywords(herb.other_name);
     
-    // Extract titles from the description and convert them into lowercase arrays of keywords
-    // const descKeywords = herb.description?.map(desc => this.extractKeywords(desc.desc_title)) || [];
+    // Extract titles from the uses and convert them into lowercase arrays of keywords
+    const useKeywords = herb.uses?.map(uses => this.extractKeywords(uses.title)) || [];
 
     // // Combine keywords from all fields
-    // const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords].concat(...descKeywords))];
+    const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords].concat(...useKeywords))];
     // Combine keywords from all fields
-    const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
+
+    // const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
 
     // Add the keywords array to the herb object
     herb.keywords = allKeywords;
@@ -150,9 +151,15 @@ updateHerbInfo(herb: HerbInfo): Promise<void> {
   // Remove symbols and convert herbname, description, and uses into lowercase arrays of keywords
   const herbnameKeywords = this.extractKeywords(herb.herbname);
   const otherKeywords = this.extractKeywords(herb.other_name);
+
+   // Extract titles from the uses and convert them into lowercase arrays of keywords
+   const useKeywords = herb.uses?.map(uses => this.extractKeywords(uses.title)) || [];
+
+   // // Combine keywords from all fields
+   const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords].concat(...useKeywords))];
   
-  // Combine keywords from all fields
-  const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
+  // // Combine keywords from all fields
+  // const allKeywords = [...new Set([...herbnameKeywords, ...otherKeywords])];
 
   // Add the keywords array to the herb object
   herb.keywords = allKeywords;

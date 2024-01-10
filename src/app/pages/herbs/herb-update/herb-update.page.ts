@@ -27,6 +27,7 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
   isTouchingTextarea = false;
   touchStartX = 0;
   touchStartY = 0;
+  selectedPhotoPath: string;
 
   option: AnimationOptions = {
     path : 'assets/json/uploadfile.json',
@@ -114,7 +115,7 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
           role: 'cancel',
           handler: () => {
             // clicked the "Cancel" button, do nothing
-          }
+          },
         },
         {
           text: 'Update',
@@ -126,24 +127,44 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
             await loading.present();
   
             try {
+              // Check if a photo is selected
+              if (this.selectedPhotoPath) {
+                // Upload the selected photo to Firestore
+                const fileName = new Date().getTime() + '.jpg';
+                const filePath = 'herb_photos/' + fileName;
+                const storage = getStorage();
+                const storageRef = ref(storage, filePath);
+  
+                const response = await fetch(this.selectedPhotoPath);
+                const blob = await response.blob();
+                await uploadBytes(storageRef, blob);
+  
+                // Get the download URL of the uploaded photo
+                const downloadURL = await getDownloadURL(storageRef);
+  
+                // Update the herb form with the photo URL
+                this.updateHerbForm.patchValue({ photourl: downloadURL });
+              }
+  
+              // Continue with form submission
               this.addDescription();
-            
               this.updateForm.onSubmit(undefined);
               await new Promise((resolve) => setTimeout(resolve, 500));
               await loading.dismiss();
               this.router.navigate(['/herb-details', this.herb.id]);
-  
             } catch (error) {
               console.error('Update failed:', error);
               await loading.dismiss();
             }
-          }
-        }
+          },
+        },
       ],
-      cssClass: 'custom-submit'
+      cssClass: 'custom-submit',
     });
+  
     await alert.present();
   }
+  
   
 
   updateInfo(values: any) {
@@ -213,77 +234,31 @@ export class HerbUpdatePage implements OnInit, OnDestroy {
     }
   }
   
-  
-  onPhotoSelected(event: any) {
-    const storage = getStorage();
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const filePath = `herb_photos/${file.name}`;
-      const storageRef = ref(storage, filePath);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-  
-      uploadTask.on('state_changed',
-        (snapshot) => {
-          // Handle upload progress
-        },
-        (error) => {
-          // Handle upload error
-        },
-        () => {
-          // Upload complete
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            this.updateHerbForm.patchValue({ photourl: downloadURL });
-          });
-        }
-      );
-    }
-  }
   async openCamera() {
     try {
       const image = await Camera.getPhoto({
         quality: 100,
-        allowEditing: false,
+        allowEditing: true,
         resultType: CameraResultType.Uri, // Capture the image URI
         source: CameraSource.Prompt
       });
-  
       
-      const fileName = new Date().getTime() + '.jpg';
-  
-      // the storage path for the image
-      const filePath = 'herb_photos/' + fileName;
-      const storage = getStorage();
-      const storageRef = ref(storage, filePath);
-  
-      // Create a blob from the image URI
-      const response = await fetch(image.webPath);
-      const blob = await response.blob();
-  
-      // Upload the image blob to Firebase Storage
-      const uploadTask = uploadBytes(storageRef, blob);
-  
-      uploadTask
-        .then((snapshot) => {
-          // Image uploaded successfully
-        })
-        .catch((error) => {
-          console.error('Image upload error:', error);
-        })
-        .then(async () => {
-          try {
-            // Upload complete
-            const downloadURL = await getDownloadURL(storageRef);
-            // Update your form field or handle the download URL as needed
-            this.updateHerbForm.patchValue({ photourl: downloadURL });
-          } catch (error) {
-            console.error('Download URL error:', error);
-          }
-        });
+
+      // Update the selected photo path
+      this.selectedPhotoPath = image.webPath;
+
+      // Display the selected photo immediately
+      this.displaySelectedPhoto(image.webPath);
+
+
     } catch (error) {
       console.error('Camera error:', error);
     }
   }
-
+  // method to display the selected photo
+  displaySelectedPhoto(photoPath: string) {
+  this.selectedPhotoPath = photoPath;
+  }
   selectSegment(segment: number) {
     this.swiper.nativeElement.swiper.slideTo(segment - 1);
     this.selectedSegment = (this.swiper.nativeElement.swiper.activeIndex + 1).toString()

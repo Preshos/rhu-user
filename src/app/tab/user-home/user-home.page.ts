@@ -9,6 +9,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
+
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.page.html',
@@ -54,16 +55,27 @@ export class UserHomePage implements OnInit {
               const loading = await this.loadingCtrl.create({ message: 'Logging out...' });
               loading.present();
   
-              // Update user status to offline on logout
-              await this.userinfoservice.updateUserStatusOffline(user.uid);
-              // Logout
-              await this.auth.logout();
+              try {
+                // Update user status to offline on logout
+                await this.userinfoservice.updateUserStatusOffline(user.uid);
+                console.log('User status updated to offline.');
+  
+                // Logout
+                await this.auth.logout();
+                console.log('User logged out successfully.');
   
                 // Dismiss loading spinner after a delay
                 setTimeout(() => {
                   loading.dismiss();
                   this.router.navigate(['/login']);
-              }, 1300);
+                  
+                  // Refresh the application
+                  window.location.reload();
+                }, 1300);
+              } catch (error) {
+                console.error('Logout error:', error);
+                loading.dismiss();
+              }
             }
           },
         },

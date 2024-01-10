@@ -14,11 +14,12 @@
 
 <ion-content>
   <br>
+  
   <div class="image-container">
-    <ng-container *ngIf="!createInfoForm.get('photourl').value">
+    <ng-container *ngIf="!selectedPhotoPath">
       <ng-lottie [options]="{ path: 'assets/json/placeholder_herb.json' }"></ng-lottie>
     </ng-container>
-    <img [src]="createInfoForm.get('photourl').value" *ngIf="createInfoForm.get('photourl').value">
+    <img [src]="selectedPhotoPath" *ngIf="selectedPhotoPath">
   </div>
 
   <div class="button-container">

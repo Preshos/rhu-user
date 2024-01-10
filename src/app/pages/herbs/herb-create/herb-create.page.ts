@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { FormGroup, FormControl, Validators, FormGroupDirective,FormArray } from '@angular/forms';
 import { HerbInfo } from 'src/app/services/herbs/herb';
 import { HerbinfoService } from 'src/app/services/herbs/herbinfo.service';
@@ -12,6 +12,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { uploadBytes } from '@angular/fire/storage';
 import { AuthService } from 'src/app/services/auth/auth.service';
+
 @Component({
   selector: 'app-herb-create',
   templateUrl: './herb-create.page.html',
@@ -28,6 +29,7 @@ export class HerbCreatePage implements OnInit {
   touchStartX = 0;
   touchStartY = 0;
   isAdmin: boolean;
+  selectedPhotoPath: string;
   @ViewChild('swiper') swiper?:ElementRef  <{swiper:Swiper}>;
   @ViewChild('createForm') createForm: FormGroupDirective;
   
@@ -39,6 +41,8 @@ export class HerbCreatePage implements OnInit {
     private router : Router,
     private actionSheetController: ActionSheetController,
     private authService : AuthService,
+    private alertController: AlertController,
+    private loadingController:LoadingController,
   ) { }
 
   ngOnInit(): void {
@@ -66,6 +70,7 @@ export class HerbCreatePage implements OnInit {
       'content': new FormControl(''),
       'benefits': new FormControl(''),
       'beware': new FormControl(''),
+      'procedure':new FormControl ('')
     });
   }
 
@@ -73,38 +78,103 @@ export class HerbCreatePage implements OnInit {
     this.modalController.dismiss();
   }
 
-  submitForm() {
-    this.addDescription();
-    console.log(this.createHerbForm.value);
-    // You can proceed with saving the form data
-    this.createForm.onSubmit(undefined);
+  // submitForm() {
+  //   this.addDescription();
+  //   console.log(this.createHerbForm.value);
+  //   // You can proceed with saving the form data
+  //   this.createForm.onSubmit(undefined);
+  // }
+
+  async submitForm() {
+    
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Create this herb info?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            // clicked the "Cancel" button, do nothing
+          },
+        },
+        {
+          text: 'Create',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Creating...',
+            });
+            await loading.present();
+            this.addDescription();
+            this.createForm.onSubmit(undefined);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await loading.dismiss();
+          },
+        },
+      ],
+      cssClass: 'custom-submit',
+    });
+  
+    await alert.present();
   }
 
   createInfo(values: any) {
+    // Convert herbname to lowercase
     values.herbname = values.herbname.toLowerCase();
-
+  
     // Extract description from the FormArray
-    const uses = values.uses.map((uses: any) => ({
-      title: uses.title,
-      content: uses.content
+    const uses = values.uses.map((use: any) => ({
+      title: use.title,
+      content: use.content,
+      procedure:use.procedure
     }));
-    
+  
+    // Check if a photo is selected
+    if (this.selectedPhotoPath) {
+      // Upload the selected photo to Firestore
+      const fileName = new Date().getTime() + '.jpg';
+      const filePath = 'herb_photos/' + fileName;
+      const storage = getStorage();
+      const storageRef = ref(storage, filePath);
+  
+      fetch(this.selectedPhotoPath)
+        .then(response => response.blob())
+        .then(blob => uploadBytes(storageRef, blob))
+        .then(() => getDownloadURL(storageRef))
+        .then(downloadURL => {
+          // Update your form field or handle the download URL as needed
+          values.photourl = downloadURL;
+          values.uses = uses
+          // Continue with creating HerbInfo
+          this.continueCreateInfo(values);
+        })
+        .catch(error => console.error('Error uploading photo:', error));
+    } else {
+
+      values.uses = uses
+      // Continue with creating HerbInfo without photo
+      this.continueCreateInfo(values);
+    }
+  }
+  
+  private continueCreateInfo(values: any) {
     // Create the HerbInfo object without the 'id'
     let newInfo: Omit<HerbInfo, 'id'> = {
       herbname: values.herbname,
       description: values.description,
       photourl: values.photourl,
-      benefits:values.benefits,
-      beware:values.beware,
-      uses: uses,
-      other_name:values.other_name
+      benefits: values.benefits,
+      beware: values.beware,
+      uses: values.uses,
+      other_name: values.other_name,
     };
   
     // Call the service to createHerbInfo
-    this.dataService.createHerbInfo(newInfo).then(() => {
-      this.dismissModal();
-    })
-    .catch(error => console.error('Error creating info:', error));
+    this.dataService.createHerbInfo(newInfo)
+      .then(() => {
+        this.dismissModal();
+      })
+      .catch(error => console.error('Error creating info:', error));
   }
 
   addDescription() {
@@ -113,14 +183,16 @@ export class HerbCreatePage implements OnInit {
     // get the values from the main form
     const titleValue = this.createHerbForm.get('title').value;
     const contentValue = this.createHerbForm.get('content').value;
-  
+    const procedureValue = this.createHerbForm.get('procedure').value;
+
     // Check if both title and content values are not empty
     if (titleValue && contentValue) {
       // Add a new FormGroup to the FormArray with the values from the main form
       descriptionArray.push(
         new FormGroup({
           'title': new FormControl(titleValue),
-          'content': new FormControl(contentValue)
+          'content': new FormControl(contentValue),
+          'procedure': new FormControl(procedureValue)
           //add more fields here
         })
       );
@@ -128,7 +200,8 @@ export class HerbCreatePage implements OnInit {
       // Reset the values of title and content in the main form (can add more fields)
       this.createHerbForm.patchValue({
         'title': '',
-        'content': ''
+        'content': '',
+        'procedure':''
       });
     }
   }
@@ -197,44 +270,21 @@ export class HerbCreatePage implements OnInit {
         source: CameraSource.Prompt
       });
   
+      // Update the selected photo path
+      this.selectedPhotoPath = image.webPath;
+
+      // Display the selected photo immediately
+      this.displaySelectedPhoto(image.webPath);
       
-      const fileName = new Date().getTime() + '.jpg';
-  
-      // the storage path for the image
-      const filePath = 'herb_photos/' + fileName;
-      const storage = getStorage();
-      const storageRef = ref(storage, filePath);
-  
-      // Create a blob from the image URI
-      const response = await fetch(image.webPath);
-      const blob = await response.blob();
-  
-      // Upload the image blob to Firebase Storage
-      const uploadTask = uploadBytes(storageRef, blob);
-  
-      uploadTask
-        .then((snapshot) => {
-          // Image uploaded successfully
-        })
-        .catch((error) => {
-          console.error('Image upload error:', error);
-        })
-        .then(async () => {
-          try {
-            // Upload complete
-            const downloadURL = await getDownloadURL(storageRef);
-            // Update your form field or handle the download URL as needed
-            this.createHerbForm.patchValue({ photourl: downloadURL });
-          } catch (error) {
-            console.error('Download URL error:', error);
-          }
-        });
     } catch (error) {
       console.error('Camera error:', error);
     }
   }
   
-  
+  // method to display the selected photo
+  displaySelectedPhoto(photoPath: string) {
+  this.selectedPhotoPath = photoPath;
+}
 
   
   

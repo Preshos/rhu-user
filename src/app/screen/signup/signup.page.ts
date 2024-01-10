@@ -11,12 +11,14 @@ import {
 
 import { Router } from '@angular/router';
 import { ToastController , LoadingController,AlertController} from '@ionic/angular';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
 import { AnimationOptions } from 'ngx-lottie';
 import { DomSanitizer } from '@angular/platform-browser';
 import { EMPTY, throwError } from 'rxjs';
+import { getDownloadURL, getStorage, ref, uploadBytes } from '@angular/fire/storage';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 export function passwordMatchValidator(): ValidatorFn
 {
@@ -44,7 +46,7 @@ export class SignupPage implements OnInit {
   signUpForm: FormGroup;
   showpass:boolean = false;
   emailVerified:boolean =false;
-
+  selectedPhotoPath: string;
 
   constructor(
     private authService : AuthService,
@@ -110,6 +112,9 @@ export class SignupPage implements OnInit {
   get emailverify(){
     return this.emailVerified
   }
+  get photourl(){
+    return this.photourl.get('photourl')
+  }
 
 
   ngOnInit() {
@@ -127,120 +132,135 @@ export class SignupPage implements OnInit {
       province:['',Validators.required],
       password: ['',[Validators.required,Validators.minLength(8),Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$')]],
       confirmPassword: ['',[Validators.required,Validators.minLength(8),Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$')]],
-
+      photourl:['']
     },
     {validators: passwordMatchValidator()}
     );
   }
 
   async submit() {
-    const loading = await this.load.create();
-
-    const { firstname, midname, lastname, email, password, phone,
-            age, gender, street,brgy, city, province } = this.signUpForm.value;
-
-    await loading.present();
-
-    if (!this.signUpForm.valid) {
-        this.showAlert('Empty Fields', 'Please fill up the form to proceed.');
-        await loading.dismiss();
-        return;
+    if (this.selectedPhotoPath) {
+      const fileName = new Date().getTime() + '.jpg';
+      const filePath = 'user_photos/' + fileName;
+      const storage = getStorage();
+      const storageRef = ref(storage, filePath);
+  
+      try {
+        // Create a blob from the image URI
+        const response = await fetch(this.selectedPhotoPath);
+        const blob = await response.blob();
+  
+        // Upload the image blob to Firebase Storage
+        await uploadBytes(storageRef, blob);
+  
+        // Image uploaded successfully
+        const downloadURL = await getDownloadURL(storageRef);
+        // Update your form field or handle the download URL as needed
+        this.signUpForm.patchValue({ photourl: downloadURL });
+      } catch (error) {
+        console.error('Image upload error:', error);
+      }
     }
-
+  
+    const loading = await this.load.create();
+  
+    const { firstname, midname, lastname, email, password, phone, 
+            age, gender, street, brgy, city, province, photourl } = this.signUpForm.value;
+  
+    await loading.present();
+  
+    // Check if the form is invalid
+    if (!this.signUpForm.valid) {
+      this.showAlert('Empty Fields', 'Please fill up the form to proceed.');
+      await loading.dismiss();
+      return;
+    }
+  
     // Sign up the user
-    this.authService.signup(email, password)
-        .pipe(
-            switchMap(({ user: { uid } }) =>
-                // Add user details to your user service
-                this.userService.addUser({ uid, email, 
-                  firstname: firstname, 
-                  midname:midname,
-                  lastname:lastname,
-                  age:age,
-                  phone:phone,
-                  gender:gender,
-                  street:street,
-                  city:city,
-                  brgy:brgy,
-                  province:province,
-                  password, 
-                  isAdmin: false, 
-                  isOnline : false })
-            ),
-            catchError((error) => {
-                if (error.code === 'auth/email-already-in-use') {
-                    // User not registered, show an alert
-                    this.showAlert('Registration Failed', 'This email is already registered. Please use a different one.');
-                }
-                return EMPTY; // Return an empty observable to stop the sequence
-                }),
-                  switchMap(() => {
-                    // Send email verification
-                    return this.authService.sendEmailVerification();
-                   }),
-                  ).subscribe(async () => {
-                    // Reset the form after successful registration
-                  this.resetForm();
-            
-                // Log out the user
-                this.authService.logout();
-
-            // Show success alert
-            await loading.dismiss();
-            const alert = await this.alert.create({
-                header: 'Success',
-                message: `Verification email has been sent to ${email}`,
-                buttons: [
-                    {
-                        text: 'OK',
-                        handler: () => {
-                            // Navigate to the login page
-                            this.router.navigate(['/login']);
-                        },
-                    },
-                ],
-                cssClass: 'alert-success',
-            });
-
-            await alert.present();
-        });
-}
-
-  // async submit() {
-  //   const loading = await this.load.create();
-
-  //   const { name, email, password} = this.signUpForm.value;
+    this.authService
+      .signup(email, password)
+      .pipe(
+        concatMap(({ user: { uid } }) =>
+          // Add user details to your user service
+          this.userService.addUser({
+            uid,
+            email,
+            firstname,
+            midname,
+            lastname,
+            age,
+            phone,
+            gender,
+            street,
+            city,
+            brgy,
+            province,
+            photourl,
+            isAdmin: false,
+            isOnline: false,
+          })
+        ),
+        catchError((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            // User not registered, show an alert
+            this.showAlert('Registration Failed', 'This email is already registered. Please use a different one.');
+          }
+          return EMPTY;
+        }),
+        concatMap(() => {
+          // Send email verification
+          return this.authService.sendEmailVerification();
+        })
+      )
+      .subscribe(
+        async () => {
+          // Reset the form after successful registration
+          this.resetForm();
+          this.authService.logout();
+          // Show success alert
+          await loading.dismiss();
+          const alert = await this.alert.create({
+            header: 'Success',
+            message: `Verification email has been sent to ${email}`,
+            buttons: [
+              {
+                text: 'OK',
+                handler: () => {
+                  // Navigate to the login page
+                  this.router.navigate(['/login']);
+                },
+              },
+            ],
+            cssClass: 'alert-success',
+          });
   
-  //   await loading.present();
-
-  //   if (!this.signUpForm.valid || !name || !password || !email) {
-  //     this.showAlert('Empty Fields', 'Please fill up the form to proceed.');
-  //     await loading.dismiss();
-  //     return;
-  //   }
-  //   this.authService.signup(email, password)
-  //     .pipe(
-  //       switchMap(({ user: { uid } }) =>
-  //         this.userService.addUser({ uid, email, displayname: name, password , isAdmin: false})
-  //       ),
-  //       catchError((error) => {
-  //         if (error.code === 'auth/email-already-in-use') {
-  //           // User not registered, show an alert
-  //           this.showAlert('Registration Faild', 'This email is already registered. Please use a differrent one.');
-  //           loading.dismiss();
-  //         }
-  //         return EMPTY; // Return an empty observable to stop the sequence
-  //       }),
-  //     ).subscribe(() => {
-  //       // Reset the form after successful registration
-  //       this.resetForm();
-  //       this.authService.logout();
-  //       // Navigate to the verify-email page
-  //       this.router.navigate(['verify-email']);
-  //       loading.dismiss();
-  //     });
-  // }
+          await alert.present();
+        },
+        (error) => {
+          console.error('Registration error:', error);
+          loading.dismiss();
+        }
+      );
+  }
   
+
+  async openCamera() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 100, 
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Prompt,
+      });
+  
+      // Update the selected photo path
+      this.selectedPhotoPath = image.webPath;
+      // Display the selected photo immediately
+      this.displaySelectedPhoto(image.webPath);
+    } catch (error) {
+      console.error('Camera error:', error);
+    }
+  }
   
   toggleshow(){
 		this.showpass = !this.showpass;
@@ -266,4 +286,11 @@ export class SignupPage implements OnInit {
 		});
 		await alert.present();
 	}
+
+  
+
+  // Add a method to display the selected photo
+  displaySelectedPhoto(photoPath: string) {
+  this.selectedPhotoPath = photoPath;
+  }
 }

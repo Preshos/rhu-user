@@ -139,7 +139,8 @@ ion-content {
 }
   
 ion-content{
-  font-family: Tahoma;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
 }
 
 ion-button {
@@ -149,13 +150,15 @@ ion-button {
 
 .kit-alert .alert-wrapper {
   border-radius: 10px;
+  --background: #f7fff1;
 }
 
 .kit-alert .alert-message {
   height: max-content; /* You may set a specific value here based on your design */
   max-height: 80vh; /* Adjust the value as needed */
   overflow: hidden;
-  
+  font-size: 14px;
+  font-family: Tahoma;
 }
 
 .card-photo img {

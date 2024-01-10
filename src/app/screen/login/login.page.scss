@@ -18,9 +18,9 @@
     align-items: center;
     justify-content: space-between;
     text-transform: capitalize;
-    color: #2db917;
-    font-size: 30px;
-    font-weight: 600;
+    color: #14C38E;
+    font-size: 24px;
+    font-weight: 700;
 
     .left {
         width: 100px;
@@ -38,13 +38,7 @@
     margin-top: 30%;
     display: block;
 }
-.label-container p{
-    font-size: 16px;
-    margin-left: 10px;
-    padding: 0;
-    letter-spacing: 1px;
-    font-weight:600;
-}
+
 ion-item {
     border-radius: 16px;
     border: 2px solid #ffffff;
@@ -71,6 +65,7 @@ ion-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 .forgot-password{
     text-align: right;
@@ -83,7 +78,7 @@ ion-icon {
   .forgot-password a ,.footer a{
     color: #000000;
     text-decoration: underline;
-    color: #2db917;
+    color: #14C38E;
     font-family: Tahoma;
   }
   .footer {
@@ -92,23 +87,94 @@ ion-icon {
     font-size: 14px;
     color: #000000;
     font-weight: 600;
+    position: relative;
   }
   
   .myButton {
-    margin-top: 5%;
-	background-color:#2db917;
+  margin-top: 5%;
+	background-color:#14C38E;
 	border-radius:28px;
 	color:#ffffff;
-    letter-spacing: 1px;
+  letter-spacing: 1px;
 	font-size:17px;
 	font-weight:bold;
 	padding:15px 39px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #2f6627;
-    box-shadow: 4px 4px 8px  rgba(0, 0, 0, 0.4);
-    width: 100%;
+  box-shadow: 4px 4px 8px  rgba(0, 0, 0, 0.4);
+  width: 100%;
 }
 button:active {
 	position:relative;
 	top:2px;
 }
+
+// //form
+.form-control{
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .form-control input {
+    background:transparent;
+    display: block;
+    width: 100%;
+    padding: 13px;
+    font-size: 16px;
+    color: black;
+    border: 2px solid #14C38E;
+    border-radius:8px;
+    
+  }
+  
+  .form-control input:focus{
+    outline: 0;
+    left: 10px;
+    background-color: #b6ffdf;
+  }
+  
+  .form-control label {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    pointer-events: none;
+    display: flex;
+    align-items: center; 
+  }
+  
+  .form-control label span {
+    display: inline-block;
+    font-size: 18px;
+    min-width: 5px;
+    color: black;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  .form-control label ion-icon{
+    margin-right:5px ;
+  }
+  
+  .form-control input:focus+label span,
+  .form-control input:valid+label span {
+    color: black;
+    transform: translateY(-45px);
+  }
+  .form-control .error{
+    color: red;
+    margin: 0; 
+    position: absolute;
+    right: 0;
+    left: 5px;
+    font-size: 12px;
+    bottom: -20px;
+  }
+  .form-control .icon-eye{
+    margin: 0; 
+    position: absolute;
+    right: 10px;
+    top: 14px;
+  }
+  

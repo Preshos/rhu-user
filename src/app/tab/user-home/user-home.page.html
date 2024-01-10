@@ -2,8 +2,12 @@
 
   <br><br>
 
-  <div class="profile-pic" [routerLink]="'/user-details/' + User.uid" >
-    <img [ngClass]="{'online-border': isUserOnline, 'offline-border': !isUserOnline}" [src]="User.photourl ?? '/assets/avatar.png'" alt="">
+  <div class="profile-pic" [routerLink]="'/user-details/' + User.uid">
+    <img
+      [ngClass]="{'online-border': isUserOnline, 'offline-border': !isUserOnline}"
+      [src]="User.photourl !== '' ? User.photourl : '/assets/avatar.png'"
+      alt=""
+    >
     <p class="profile-name">{{ User.firstname }}</p>
     <p class="profile-email">{{ User.email }}</p>
   </div>
@@ -23,7 +27,7 @@
       <ion-icon slot="end" name="chevron-forward"></ion-icon>
     </ion-item>
 
-    <ion-item>
+    <ion-item  [routerLink]="'/about'">
       <ion-icon name="information-circle"></ion-icon>
       <p>About</p>
       <ion-icon slot="end" name="chevron-forward"></ion-icon>

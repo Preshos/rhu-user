@@ -29,6 +29,7 @@ export class AidkitUpdatePage implements OnInit {
   isTouchingTextarea = false;
   touchStartX = 0;
   touchStartY = 0;
+  selectedPhotoPath: string;
 
   @ViewChild('swiper') swiper?:ElementRef  <{swiper:Swiper}>;
   @ViewChild('updateForm') updateForm: FormGroupDirective;
@@ -106,10 +107,35 @@ export class AidkitUpdatePage implements OnInit {
   }
 
   updateInfo(values: any) {
-    values.name = values.name.toLowerCase();
-    // copy all the form values into the Info to be updated
-    let updatedInfo: FirstAidKitInfo = { id: this.info.id, ...values };
-    this.infoService.updateFirstAidKitInfo(updatedInfo);
+    
+    // Check if a photo is selected
+    if (this.selectedPhotoPath) {
+      // Upload the selected photo to Firestore
+      const fileName = new Date().getTime() + '.jpg';
+      const filePath = 'firstaid_photos/' + fileName;
+      const storage = getStorage();
+      const storageRef = ref(storage, filePath);
+  
+      fetch(this.selectedPhotoPath)
+        .then(response => response.blob())
+        .then(blob => uploadBytes(storageRef, blob))
+        .then(() => getDownloadURL(storageRef))
+        .then(downloadURL => {
+          // Update the form field or handle the download URL as needed
+          values.photourl = downloadURL;
+  
+          values.name = values.name.toLowerCase();
+          let updatedInfo: FirstAidKitInfo = { id: this.info.id, ...values };
+          this.infoService.updateFirstAidKitInfo(updatedInfo);
+          console.log('Form Values:', values);
+        })
+        .catch(error => console.error('Error uploading photo:', error));
+    } else{
+      values.name = values.name.toLowerCase();
+      // copy all the form values into the Info to be updated
+      let updatedInfo: FirstAidKitInfo = { id: this.info.id, ...values };
+      this.infoService.updateFirstAidKitInfo(updatedInfo);
+    }
   }
 
   async deleteInfo(infoId: string) {
@@ -147,11 +173,18 @@ export class AidkitUpdatePage implements OnInit {
     try {
       const image = await Camera.getPhoto({
         quality: 100,
-        allowEditing: false,
+        allowEditing: true,
         resultType: CameraResultType.Uri, // Capture the image URI
         source: CameraSource.Prompt
       });
   
+
+      // Update the selected photo path
+      this.selectedPhotoPath = image.webPath;
+
+      // Display the selected photo immediately
+      this.displaySelectedPhoto(image.webPath);
+
       
       const fileName = new Date().getTime() + '.jpg';
   
@@ -188,6 +221,12 @@ export class AidkitUpdatePage implements OnInit {
       console.error('Camera error:', error);
     }
   }
+
+  // method to display the selected photo
+  displaySelectedPhoto(photoPath: string) {
+    this.selectedPhotoPath = photoPath;
+  }
+
   selectSegment(segment: number) {
     this.swiper.nativeElement.swiper.slideTo(segment - 1);
     this.selectedSegment = (this.swiper.nativeElement.swiper.activeIndex + 1).toString()

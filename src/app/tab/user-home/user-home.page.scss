@@ -16,7 +16,7 @@
 }
 
 .online-border {
-    border: 5px solid green;
+    border: 5px solid rgb(42, 255, 18);
   }
   
   .offline-border {
@@ -85,7 +85,7 @@ button:active {
 }
 
 ion-item {
-    --background: #C58940;
+    --background: linear-gradient(65deg, #14C38E 40%,#00FFAB);
     margin-top: 5%;
     border-radius: 28px;
     color:#ffffff;

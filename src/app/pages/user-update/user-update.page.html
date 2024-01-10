@@ -11,7 +11,12 @@
 
     <div class="profile">
       <!-- || profileForm.get('photourl')?.value  -->
-      <img [src]="selectedPhotoPath || user.photourl ?? '/assets/avatar.png'" *ngIf="selectedPhotoPath || user.photourl">
+      <img
+      [ngClass]="{'online-border': user.isOnline, 'offline-border': !user.isOnline}"
+      [src]="selectedPhotoPath ? selectedPhotoPath : (user.photourl !== '' ? user.photourl : '/assets/avatar.png')"
+      alt=""
+      >
+      <!-- <img [src]="selectedPhotoPath || user.photourl ?? '/assets/avatar.png'" *ngIf="selectedPhotoPath || user.photourl"> -->
       <img  (click)="openCamera()" class="camera"src="/assets/icon/icam.png" alt="">
     </div>
     

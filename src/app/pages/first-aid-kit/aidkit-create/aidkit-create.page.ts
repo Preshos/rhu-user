@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { FormGroup, FormControl, Validators, FormGroupDirective } from '@angular/forms';
 import { InfoService } from 'src/app/services/first-aid-kit/info.service';
 import { FirstAidKitInfo } from 'src/app/services/first-aid-kit/aidkit';
@@ -27,7 +27,8 @@ export class AidkitCreatePage implements OnInit {
   isTouchingTextarea = false;
   touchStartX = 0;
   touchStartY = 0;
-
+  selectedPhotoPath: string;
+  
   @ViewChild('swiper') swiper?:ElementRef  <{swiper:Swiper}>;
   @ViewChild('createForm') createForm: FormGroupDirective;
 
@@ -36,7 +37,9 @@ export class AidkitCreatePage implements OnInit {
     private infoService: InfoService,
     private activatedRoute: ActivatedRoute,
     private router : Router,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private alertController: AlertController,
+    private loadingController:LoadingController,
   ) { }
 
   ngOnInit(): void {
@@ -59,16 +62,69 @@ export class AidkitCreatePage implements OnInit {
   dismissModal() {
     this.modalController.dismiss();
   }
-  submitForm() {
-    this.createForm.onSubmit(undefined);
+
+  async submitForm() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Create this info?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            // clicked the "Cancel" button, do nothing
+          },
+        },
+        {
+          text: 'Create',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Creating...',
+            });
+            await loading.present();
+            this.createForm.onSubmit(undefined);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await loading.dismiss();
+          },
+        },
+      ],
+      cssClass: 'custom-submit',
+    });
+  
+    await alert.present();
   }
 
   createInfo(values: any) {
-
-    values.name = values.name.toLowerCase();
-    let newInfo: FirstAidKitInfo = { ...values };
-    this.infoService.createFirstAidKitInfo(newInfo);
-    this.dismissModal();
+    // Check if a photo is selected
+    if (this.selectedPhotoPath) {
+      // Upload the selected photo to Firestore
+      const fileName = new Date().getTime() + '.jpg';
+      const filePath = 'firstaid_photos/' + fileName;
+      const storage = getStorage();
+      const storageRef = ref(storage, filePath);
+  
+      fetch(this.selectedPhotoPath)
+        .then(response => response.blob())
+        .then(blob => uploadBytes(storageRef, blob))
+        .then(() => getDownloadURL(storageRef))
+        .then(downloadURL => {
+          // Update the form field or handle the download URL as needed
+          values.photourl = downloadURL;
+  
+          values.name = values.name.toLowerCase();
+          let newInfo: FirstAidKitInfo = { ...values };
+          this.infoService.createFirstAidKitInfo(newInfo);
+          this.dismissModal();
+          console.log('Form Values:', values);
+        })
+        .catch(error => console.error('Error uploading photo:', error));
+    } else {
+      // Continue with creating without photo
+      values.name = values.name.toLowerCase();
+      let newInfo: FirstAidKitInfo = { ...values };
+      this.infoService.createFirstAidKitInfo(newInfo);
+      this.dismissModal();
+    }   
   }
   ngOnDestroy() {
     this.sub1.unsubscribe();
@@ -124,45 +180,27 @@ export class AidkitCreatePage implements OnInit {
     try {
       const image = await Camera.getPhoto({
         quality: 100,
-        allowEditing: false,
+        allowEditing: true,
         resultType: CameraResultType.Uri, // Capture the image URI
         source: CameraSource.Prompt
       });
-  
       
-      const fileName = new Date().getTime() + '.jpg';
-  
-      // the storage path for the image
-      const filePath = 'aidkit_photos/' + fileName;
-      const storage = getStorage();
-      const storageRef = ref(storage, filePath);
-  
-      // Create a blob from the image URI
-      const response = await fetch(image.webPath);
-      const blob = await response.blob();
-  
-      // Upload the image blob to Firebase Storage
-      const uploadTask = uploadBytes(storageRef, blob);
-  
-      uploadTask
-        .then((snapshot) => {
-          // Image uploaded successfully
-        })
-        .catch((error) => {
-          console.error('Image upload error:', error);
-        })
-        .then(async () => {
-          try {
-            // Upload complete
-            const downloadURL = await getDownloadURL(storageRef);
-            // Update your form field or handle the download URL as needed
-            this.createInfoForm.patchValue({ photourl: downloadURL });
-          } catch (error) {
-            console.error('Download URL error:', error);
-          }
-        });
+
+      // Update the selected photo path
+      this.selectedPhotoPath = image.webPath;
+      
+      // Display the selected photo immediately
+      this.displaySelectedPhoto(image.webPath);
+
+      
+      
     } catch (error) {
       console.error('Camera error:', error);
     }
   }
+  // method to display the selected photo
+  displaySelectedPhoto(photoPath: string) {
+  this.selectedPhotoPath = photoPath;
+}
+
 }

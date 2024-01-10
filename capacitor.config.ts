@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.firstaiduser.app',
-  appName: 'First-aid-rhu-user',
+  appName: 'Rhu-App',
   webDir: 'www',
   server: {
     androidScheme: 'https'

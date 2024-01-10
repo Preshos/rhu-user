@@ -89,6 +89,7 @@ async openDetailsAlert(item: any) {
         <img src="${item.photourl}" alt="" >
       </div>
       <div class="card-name">${item.name}</div>
+      <br>
       <div class="card-desc">${item.description}</div>
     `,
     buttons: buttons,

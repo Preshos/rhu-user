@@ -16,7 +16,8 @@
     <ng-container *ngIf="!updateInfoForm.get('photourl').value">
       <ng-lottie [options]="{ path: 'assets/json/placeholder_herb.json' }"></ng-lottie>
     </ng-container>
-    <img [src]="updateInfoForm.get('photourl')?.value || info.photourl " *ngIf="updateInfoForm.get('photourl').value || info.photourl">
+
+    <img [src]="selectedPhotoPath || info.photourl" *ngIf="selectedPhotoPath || info.photourl">
   </div>
 
   <div class="button-container">
@@ -57,7 +58,7 @@
   </form>
 
   <div class="button-container">
-    <button (click)="deleteInfo(info.id)">>Delete this info</button>
+    <button (click)="deleteInfo(info.id)">Delete this info</button>
   </div>
 
 </ion-content>

@@ -1,12 +1,3 @@
-<ion-header [translucent]="true" class="ion-no-border">
-
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-</ion-header>
 
 <ion-content [fullscreen]="true" (ionRefresh)="doRefresh($event)">
   <ion-refresher slot="fixed">
@@ -15,17 +6,37 @@
     >
     </ion-refresher-content>
   </ion-refresher>
+
+  <img class="back" (click)="back()" src="/assets/icon/iback.png" alt="">
+
   <div class="top-container">
     <p> <b>Total Users:</b> {{ totalUsers }}</p>
   </div>
 
- 
-    <ion-card *ngFor="let user of user | async; let i = index" [routerLink]="'/user-details/' + user.id" >
-      <div class="profile" >
-        <img [ngClass]="{'online-border': user.isOnline, 'offline-border': !user.isOnline}"  [src]="user.photourl ?? '/assets/placeholder.jpg'">
-        <p>{{user.firstname}}</p>
-      </div>
-    </ion-card>
- 
+
+<div class="container">
+
+
+  <div class="grid">
+    <div class="e-card playing" *ngFor="let user of user | async; let i = index" [routerLink]="'/user-details/' + user.id">
+      <div class="image"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+          <div class="infotop">
+            <div class="profile">
+              <img
+                [ngClass]="{'online-border': user.isOnline, 'offline-border': !user.isOnline}"
+                [src]="user.photourl !== '' ? user.photourl : '/assets/avatar.png'"
+                alt="User Photo"
+              >
+            </div>    
+            {{user.firstname}}
+            <br>
+            <div class="name">{{user.email}}</div>
+          </div>
+    </div>
+  </div>
+</div>
  
 </ion-content>

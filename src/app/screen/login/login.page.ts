@@ -7,11 +7,12 @@ import {
 
 import { Router } from '@angular/router';
 import { ToastController , LoadingController,AlertController} from '@ionic/angular';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
 import { AnimationOptions } from 'ngx-lottie';
 import { EMPTY } from 'rxjs';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -99,7 +100,16 @@ export class LoginPage implements OnInit {
               if (!user.emailVerified) {
                 await this.authService.sendEmailVerification().toPromise();
                 this.showAlert('Email is not Verified', 'Please check your email and click the verification link to log in.');
+                await this.userService.updateUserStatusOffline(user.uid);
+                this.authService.logout();
               } else {
+                
+                // Get user's first name
+              const currentUser = await this.userService.currentUserProfile$.pipe(take(1)).toPromise();
+              const firstName = currentUser ? currentUser.firstname : 'User';
+
+              // Display welcome toast
+              this.presentToast(`Welcome, ${firstName}!`);
                 // Email is verified, proceed to the main content
                 this.router.navigate(['/tabs/tabs/herb-home']);
               }
@@ -115,6 +125,7 @@ export class LoginPage implements OnInit {
       .subscribe(async () => {
         await loading.dismiss();
         this.logInForm.reset();
+        
       });
   }
 
@@ -137,5 +148,16 @@ export class LoginPage implements OnInit {
     this.router.navigate(['/signup']).then(() => {
       this.logInForm.reset();
     });
+  }
+
+  async presentToast(message: string) {
+    const toast = await this.toastcontrol.create({
+      message: message,
+      duration: 2000, // Set the duration in milliseconds
+      position: 'middle', // Set the position
+      color: 'success', // Set the color (optional)
+    });
+  
+    toast.present();
   }
 }

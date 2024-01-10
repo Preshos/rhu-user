@@ -118,18 +118,6 @@ const routes: Routes = [
     loadChildren: () => import('./learn/firstaid/why/why.module').then( m => m.WhyPageModule)
   },
   {
-    path: 'what',
-    loadChildren: () => import('./learn/herbal/what/what.module').then( m => m.WhatPageModule)
-  },
-  {
-    path: 'why',
-    loadChildren: () => import('./learn/herbal/why/why.module').then( m => m.WhyPageModule)
-  },
-  {
-    path: 'aim',
-    loadChildren: () => import('./learn/herbal/aim/aim.module').then( m => m.AimPageModule)
-  },
-  {
     path: 'herbal-info',
     loadChildren: () => import('./learn/herbal/herbal-info/herbal-info.module').then( m => m.HerbalInfoPageModule)
   },
@@ -148,6 +136,10 @@ const routes: Routes = [
   {
     path: 'user-update/:id',
     loadChildren: () => import('./pages/user-update/user-update.module').then( m => m.UserUpdatePageModule)
+  },
+  {
+    path: 'about',
+    loadChildren: () => import('./pages/about/about.module').then( m => m.AboutPageModule)
   },
   
 ];

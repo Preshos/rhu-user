@@ -1,128 +1,208 @@
 <ion-content>
-
   <div class="container">
     <div class="login">
       <img src="/assets/rhu_logo.png" alt="">
       <p>Register</p>
       <img src="/assets/san_isidro_logo.png" alt="">
-    </div>
-
-    <form (ngSubmit)="submit()" [formGroup]="signUpForm">
-
-    <div class="label-container">
-
-        <p>First Name</p>
-        <ion-item>
-          <ion-input type="text" placeholder="Juan" formControlName="firstname"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(firstname.dirty || firstname.touched) && firstname.errors">*Required</ion-note>
-        
-        <p>Middle Initial</p>
-        <ion-item>
-          <ion-input type="text" placeholder="Domingo." formControlName="midname"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(midname.dirty || midname.touched) && midname.errors">*Required</ion-note>
-
-        <p>Last Name</p>
-        <ion-item>
-          <ion-input type="text" placeholder="Dela Cruz" formControlName="lastname"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(lastname.dirty || lastname.touched) && lastname.errors">*Required</ion-note>
-
-        <p>Age</p>
-        <ion-item>
-          <ion-input type="number" placeholder="16" formControlName="age"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(age.dirty || age.touched) && age.errors">*Required</ion-note>
-
-        <p>Phone Number</p>
-        <ion-item>
-          <ion-input type="tel" maxlength="11" placeholder="09XXXXXXXXX" formControlName="phone"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(phone.dirty || phone.touched) && phone.errors">*Required</ion-note>
-
-        <p>Gender</p>
-        <ion-item>
-          <ion-select formControlName="gender" placeholder="Select Gender">
-            <ion-select-option value="Male">Male</ion-select-option>
-            <ion-select-option value="Female">Female</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        
-          <p>Steet</p>
-          <ion-item>
-            <ion-input type="text" placeholder="" formControlName="age"></ion-input>
-          </ion-item>
-
-          <p>Barangay</p>
-          <ion-item>
-            <ion-input type="text" placeholder="Alua" formControlName="brgy"></ion-input>
-          </ion-item>
-          <!-- <ion-item>
-            <ion-select formControlName="brgy" multiple="true" placeholder="Barangay">
-              <ion-select-option value="Alua">Alua</ion-select-option>
-              <ion-select-option value="Calaba">Calaba</ion-select-option>
-              <ion-select-option value="Malapit">Malapit</ion-select-option>
-              <ion-select-option value="Mangga">Mangga</ion-select-option>
-              <ion-select-option value="Poblacion">Poblacion</ion-select-option>
-              <ion-select-option value="Pulo">Pulo</ion-select-option>
-              <ion-select-option value="San Roque">San Roque</ion-select-option>
-              <ion-select-option value="Sitio Polillio">Sitio Polillio</ion-select-option>
-              <ion-select-option value="Sto. Cristo">Sto. Cristo</ion-select-option>
-              <ion-select-option value="Tabon">Tabon</ion-select-option>
-            </ion-select>
-          </ion-item> -->
-          <ion-note slot="error" *ngIf="(brgy.dirty || brgy.touched) && brgy.errors">*Required</ion-note>
-        
-
-        <p>City</p>
-        <ion-item>
-          <ion-input type="text" placeholder="San Isidro" formControlName="city"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(city.dirty || city.touched) && city.errors">*Required</ion-note>
-
-        <p>Province</p>
-        <ion-item>
-          <ion-input type="text" placeholder="Nueva Ecija" formControlName="province"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(province.dirty || province.touched) && province.errors">*Required</ion-note>
-
-        <p>Email</p>
-        <ion-item>
-          <ion-icon  name ="mail"></ion-icon>
-          <ion-input type="email" placeholder="user@gmail.com" formControlName="email"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors">*Invalid Email</ion-note>
-
-        
-        <p>Password</p>
-        <ion-item>
-          <ion-icon name="lock-closed"></ion-icon>
-          <ion-input type="{{showpass ? 'text' : 'Password'}}" placeholder="********" formControlName="password"></ion-input>
-          <ion-icon slot="end" [name] = "showpass ? 'eye-off': 'eye'" (click)="toggleshow()"></ion-icon>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">*Password must consist of 8 letters with 1 capital and number</ion-note>
-
-        <p>Confirm Password</p>
-        <ion-item>
-          <ion-icon name="lock-closed"></ion-icon>
-          <ion-input type="{{showpass ? 'text' : 'password'}}" formControlName="confirmPassword" ></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="signUpForm.errors?.['passwordsDontMatch']">*Password don't match</ion-note> 
-
-        <div class="button">
-          <button class="myButton" type="submit">
-            Create Account
-          </button>
-        </div>
-    </div>
-
-    </form>
-
-    <div class="footer">
-      <p>Already Have an Account? <a (click)="login()">Login</a></p>
-    </div>
-
+    </div> 
   </div>
+
+  <div class="top">
+
+
+    <div class="profile">
+      <!-- || signUpForm.get('photourl')?.value  -->
+      <ng-container *ngIf="!selectedPhotoPath">
+        <img src="/assets/avatar.png" alt="">
+      </ng-container>
+      <img [src]="selectedPhotoPath" *ngIf="selectedPhotoPath ">
+
+      <img  (click)="openCamera()" class="camera"src="/assets/icon/icam.png" alt="">
+    </div>
+    
+    </div>
+
+  <form [formGroup]="signUpForm"  #updateForm="ngForm" (ngSubmit)="submit()">  
+    <div class="details">
+      <div class="card">
+        <p class="label-top"> Basic Information </p>
+        
+        <br>
+        <!-- firstname -->
+        <div class="form-control">
+          <input type="text" required=""  formControlName="firstname" autocomplete="false">
+          <label>
+              <span *ngFor="let char of ['F','i','r','s','t','','n','a','m','e']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" slot="error" *ngIf="(firstname.dirty || firstname.touched) && firstname.errors">*Required</ion-note>
+        </div>
+        <br>
+  
+        <!-- midname-->
+        <div class="form-control">
+          <input type="text" required="" formControlName="midname">
+          <label>
+              <span *ngFor="let char of ['M','i','d','d','l','e','','I','n','i','t','i','a','l']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note  class="error" *ngIf="(midname.dirty || midname.touched) && midname.errors">*Required</ion-note>
+        </div>
+        <br>
+  
+        <!-- lastname -->
+          <div class="form-control">
+            <input type="text" required="" formControlName="lastname">
+            <label>
+              <span *ngFor="let char of ['L','a','s','t','', 'n','a','m','e']; let i = index" [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+            </label>
+            <ion-note class="error" *ngIf="(lastname.dirty || lastname.touched) && lastname.errors">*Required</ion-note>
+          </div>
+        <br>
+  
+        <!-- age -->
+        <div class="form-control">
+          <input type="number" required=""  formControlName="age">
+          <label>
+              <span *ngFor="let char of ['A','g','e']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(age.dirty || age.touched) && age.errors">*Required</ion-note>
+        </div>
+  
+       <!-- Gender -->
+       <div class="gender">
+        <label class="title">Gender</label>
+        <br>
+        <div class="radio-input">
+          <input value="Male" name="gender" id="value-1" type="radio" formControlName="gender">
+          <label for="value-1">Male</label>
+          <input value="Female" name="gender" id="value-2" type="radio" formControlName="gender">
+          <label for="value-2">Female</label>
+        </div>
+       </div>
+       <br>
+
+       <!-- Phone -->
+       <div class="form-control">
+        <input type="tel" maxlength="11" required=""  formControlName="phone">
+        <label>
+            <span *ngFor="let char of ['P','h','o','n','e']; let i = index" 
+            [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+        </label>
+        <ion-note class="error" *ngIf="(phone.dirty || phone.touched) && phone.errors">*Required</ion-note>
+      </div>
+
+      <br>
+        <p class="label">Address</p>
+      <br>
+        <!-- street-->
+        <div class="form-control">
+          <input type="text" required="" formControlName="street">
+          <label>
+              <span *ngFor="let char of ['S','t','r','e','e','t']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(street.dirty || street.touched) && street.errors">*Required</ion-note>
+        </div>
+        <br>
+        <!-- brgy-->
+        <div class="form-control">
+          <input type="text" required="" formControlName="brgy">
+          <label>
+              <span *ngFor="let char of ['B','a','r','a','n','g','a','y']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(brgy.dirty || brgy.touched) && brgy.errors">*Required</ion-note>
+        </div>
+        <br>
+        <!-- city-->
+        <div class="form-control">
+          <input type="text" required="" formControlName="city">
+          <label>
+              <span *ngFor="let char of ['C','i','t','y']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(city.dirty || city.touched) && city.errors">*Required</ion-note>
+        </div>
+        <br>
+        <!-- province-->
+        <div class="form-control">
+          <input type="text" required="" formControlName="province">
+          <label>
+              <span *ngFor="let char of ['P','r','o','v','i','n','c','e']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(province.dirty || province.touched) && province.errors">*Required</ion-note>
+        </div>
+        <br>
+          <p class="label">Registration</p>
+        <br>
+         <!-- Email-->
+         <div class="form-control">
+          <input type="text" required="" formControlName="email">
+          <label>
+              <span *ngFor="let char of ['E','m','a','i','l']; let i = index" 
+              [style.transition-delay]="i * 50 + 'ms'">
+                {{ char }}
+              </span>
+          </label>
+          <ion-note class="error" *ngIf="(email.dirty || email.touched) && email.errors">*Invalid Email</ion-note>
+        </div>
+        <br>
+         <!-- Password-->
+         <div class="form-control">
+          <input type="{{ showpass ? 'text' : 'password' }}" required="" formControlName="password">
+          <label>
+            <span *ngFor="let char of ['P','a','s','s','w','o','r','d']; let i = index" 
+                  [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+          </label>
+          <ion-icon class="icon-eye" slot="end" [name]="showpass ? 'eye-off' : 'eye'" (click)="toggleshow()"></ion-icon>
+          <ion-note class="error" *ngIf="(password.dirty || password.touched) && password.errors">Password must be 8 characters with 1 capital letter and 1 number</ion-note>
+        </div>
+        <br>
+        <!-- Confirm Password-->
+        <div class="form-control">
+          <input type="{{ showpass ? 'text' : 'password' }}" required="" formControlName="confirmPassword">
+          <label>
+            <span *ngFor="let char of ['C','o','n','f','i','r','m',' ','P','a','s','s','w','o','r','d']; let i = index" 
+                  [style.transition-delay]="i * 50 + 'ms'">
+              {{ char }}
+            </span>
+          </label>
+          <ion-note class="error" *ngIf="signUpForm.errors?.['passwordsDontMatch']">*Password don't match</ion-note> 
+        </div>
+      </div>
+      
+      <div class="button">
+        <button class="myButton" type="submit" >
+          Create Account
+        </button>
+      </div>
+
+      <div class="footer">
+        <p>Already Have an Account? <a (click)="login()">Login</a></p>
+      </div>
+    </div>
+  </form>
 </ion-content>

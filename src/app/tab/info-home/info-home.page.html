@@ -1,9 +1,16 @@
 <ion-content>
-
-  <div class="container">
-    <p class="info">Information</p>
-    <p>You should know</p>
+  <div class="e-card playing">
+    <div class="image"></div>
+    
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="infotop">
+      <p class="info">Information</p>
+      <p>You should know</p>
+    </div>
   </div>
+
   <ion-segment [(ngModel)]="selectedSegment" class="sticky-segment">
     <ion-segment-button *ngFor="let segment of segments" [value]="segment.value" (click)="selectSegment(segment.value)">
       <img [src]="segment.image" alt="">

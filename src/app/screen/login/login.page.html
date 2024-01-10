@@ -3,28 +3,43 @@
   
   <div class="container">
     <div class="login">
-      <img class="left" src="/assets/rhu_logo.png">
+      <img src="/assets/rhu_logo.png">
       <p>Login</p>
-      <img class="right" src="/assets/san_isidro_logo.png">
+      <img src="/assets/san_isidro_logo.png">
     </div>
 
     <form (ngSubmit)="login()" [formGroup]="logInForm">
 
     <div class="label-container">
-        <p>Email</p>
-        <ion-item>
-          <ion-icon  name = "mail"></ion-icon>
-          <ion-input type="email" placeholder="user@gmail.com" formControlName="email"></ion-input>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors">Invalid Email</ion-note>
-
-        <p>Password</p>
-        <ion-item>
-          <ion-icon name="lock-closed"></ion-icon>
-          <ion-input type="{{showpass ? 'text' : 'Password'}}" placeholder="********" formControlName="password"></ion-input>
-          <ion-icon slot="end" [name] = "showpass ? 'eye-off': 'eye'" (click)="toggleshow()"></ion-icon>
-        </ion-item>
-        <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">Invalid Password</ion-note>
+      <div class="form-control">
+        <input type="text" required="" formControlName="email">
+        <label>
+          <ng-container *ngFor="let char of [' ', 'E','m','a','i','l']; let i = index">
+            <span [style.transition-delay]="(i + 1) * 50 + 'ms'">
+              <ion-icon slot="start" *ngIf="i === 0" name="mail"></ion-icon>
+              {{ char }}
+            </span>
+          </ng-container>
+        </label>
+        <ion-note class="error" *ngIf="(email.dirty || email.touched) && email.errors">*Invalid Email</ion-note>
+      </div>
+      <br>
+      <br>
+         <!-- Password-->
+         <div class="form-control">
+          <input type="{{ showpass ? 'text' : 'password' }}" required="" formControlName="password">
+          <label>
+            <ng-container *ngFor="let char of [' ','P','a','s','s','w','o','r','d']; let i = index" >
+              <span [style.transition-delay]="(i + 1) * 50 + 'ms'">
+                <ion-icon slot="start" *ngIf="i === 0" name="lock-closed"></ion-icon>
+                {{ char }}
+              </span>
+            </ng-container>
+          </label>
+          <ion-icon class="icon-eye" slot="end" [name]="showpass ? 'eye-off' : 'eye'" (click)="toggleshow()"></ion-icon>
+          <ion-note class="error" *ngIf="(password.dirty || password.touched) && password.errors">Invalid Password</ion-note>
+        </div>
+        <br>
 
         <div class="forgot-password">
           <a routerLink="/forgot-password">Forgot Password?</a>

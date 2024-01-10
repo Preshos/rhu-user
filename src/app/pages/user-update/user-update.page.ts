@@ -12,6 +12,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL, } from "firebase
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { uploadBytes } from '@angular/fire/storage';
 import { ChangeDetectorRef } from '@angular/core';
+
 @UntilDestroy()
 @Component({
   selector: 'app-user-update',
@@ -122,19 +123,17 @@ updateInfo(values: any) {
 }
 
 async submitForm() {
-  const { uid, ...data  } = this.profileForm.value;
-  if (!uid){
+  const { uid, ...data } = this.profileForm.value;
+  if (!uid) {
     return;
   }
+
+  // Create a copy of the form data to prevent modifications before confirmation
   const profileForm: ProfileUser = { uid: this.user?.uid, ...data };
 
   // Set isAdmin to true for the current user
-  if (this.user.isAdmin) {
-    profileForm.isAdmin = true;
-  } else {
-    profileForm.isAdmin = false;
-  }
-  
+  profileForm.isAdmin = this.user.isAdmin;
+
   const alert = await this.alertController.create({
     header: 'Confirm Update',
     message: 'Are you sure you want to update this?',
@@ -143,7 +142,7 @@ async submitForm() {
         text: 'Cancel',
         role: 'cancel',
         handler: () => {
-          // clicked the "Cancel" button, do nothing
+          // User clicked the "Cancel" button, do nothing
         }
       },
       {
@@ -156,22 +155,48 @@ async submitForm() {
           await loading.present();
 
           try {
-            this.userservice.updateUser(profileForm);
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            await loading.dismiss();
-            this.router.navigate(['/tabs/tabs/user-home']);
+            if (this.selectedPhotoPath) {
+              // Upload the selected photo to Firestore
+              const fileName = new Date().getTime() + '.jpg';
+              const filePath = 'user_photos/' + fileName;
+              const storage = getStorage();
+              const storageRef = ref(storage, filePath);
 
+              const response = await fetch(this.selectedPhotoPath);
+              const blob = await response.blob();
+              await uploadBytes(storageRef, blob);
+
+              // Get the download URL of the uploaded photo
+              const downloadURL = await getDownloadURL(storageRef);
+
+              // Update the profile form with the photo URL
+              profileForm.photourl = downloadURL;
+
+              console.log('Photo uploaded. Form data with photo:', profileForm);
+            } else {
+              console.log('No photo selected. Form data without photo:', profileForm);
+            }
+
+            // Update the user in Firestore
+            await this.userservice.updateUser(profileForm);
+
+            console.log('User updated successfully:', profileForm);
+
+            // Navigate to the user home page
+            this.router.navigate(['/tabs/tabs/user-home']);
           } catch (error) {
             console.error('Update failed:', error);
+          } finally {
             await loading.dismiss();
           }
         }
       }
-    ]
+    ],
+    cssClass: 'custom-logout',
   });
+
   await alert.present();
 }
-
 
 back(){
   this.router.navigate(['tabs/tabs/user-home']).then(()=>{
@@ -185,36 +210,17 @@ async openCamera() {
   try {
     const image = await Camera.getPhoto({
       quality: 100,
-      allowEditing: false,
+      allowEditing: true,
       resultType: CameraResultType.Uri,
       source: CameraSource.Prompt
     });
 
+    // Update the selected photo path
+    this.selectedPhotoPath = image.webPath;
+
     // Display the selected photo immediately
-    this.displaySelectedPhoto(image.webPath);
-
-    const fileName = new Date().getTime() + '.jpg';
-    const filePath = 'user_photos/' + fileName;
-    const storage = getStorage();
-    const storageRef = ref(storage, filePath);
-
-    // Create a blob from the image URI
-    const response = await fetch(image.webPath);
-    const blob = await response.blob();
-
-    // Upload the image blob to Firebase Storage
-    const uploadTask = uploadBytes(storageRef, blob);
-
-    uploadTask
-      .then(async (snapshot) => {
-        // Image uploaded successfully
-        const downloadURL = await getDownloadURL(storageRef);
-        // Update your form field or handle the download URL as needed
-        this.profileForm.patchValue({ photourl: downloadURL });
-      })
-      .catch((error) => {
-        console.error('Image upload error:', error);
-      });
+    this.displaySelectedPhoto(this.selectedPhotoPath);
+    
   } catch (error) {
     console.error('Camera error:', error);
   }

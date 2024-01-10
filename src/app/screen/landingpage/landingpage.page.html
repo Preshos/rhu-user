@@ -9,12 +9,12 @@
         <p>{{ item.message }}</p>
       </div>
       
-      <!-- Show "grow" animation only on the second slide -->
-      <ng-container *ngFor="let j of [1]">
-        <div class="lottie-bg" [style.left.px]="25 * j" *ngIf="index === 1">
+      <!-- Show "grow" animation only on the second slide
+      <ng-container *ngFor="let j of [1,2,3,4,5]">
+        <div class="lottie-bg" [style.left.px]="20 * j" *ngIf="index === 1">
           <ng-lottie [options]="grow"></ng-lottie>
         </div>
-      </ng-container>
+      </ng-container> -->
 
       <!-- Show button only on the last slide -->
       <button *ngIf="last" routerLink="/login">Get Started</button>

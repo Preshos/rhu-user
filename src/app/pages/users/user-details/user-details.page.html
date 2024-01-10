@@ -1,8 +1,14 @@
 <ion-content [fullscreen]="true" *ngIf="user" >
+  
     <div class="top">
+
       <img class="back" (click)="back()" src="/assets/icon/iback.png" alt="">
+      
       <div class="profile">
-        <img  [src]="user.photourl ?? '/assets/avatar.png'" alt="">
+        <img *ngIf="user.photourl; else placeholder" [src]="user.photourl" alt="">
+        <ng-template #placeholder>
+          <img src="/assets/avatar.png" alt="Placeholder Image">
+        </ng-template>
         <p class="profile-name">{{ user.firstname }}</p>
         <p class="profile-email">{{ user.email }}</p>
       </div>

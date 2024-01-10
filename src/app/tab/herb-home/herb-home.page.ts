@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { HerbInfo } from 'src/app/services/herbs/herb';
 import { HerbinfoService } from 'src/app/services/herbs/herbinfo.service';
 import { HerbCreatePage } from 'src/app/pages/herbs/herb-create/herb-create.page';
-import { ModalController, IonRouterOutlet } from '@ionic/angular';
+import { ModalController, IonRouterOutlet, NavController, IonTabs } from '@ionic/angular';
 import { Observable, debounceTime, of , distinctUntilChanged, take, timer} from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -11,6 +11,9 @@ import { ChangeDetectionStrategy } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { UserinfoService } from 'src/app/services/users/userinfo.service';
 import Swiper from 'swiper';
+import { ToastController } from '@ionic/angular';
+import { Keyboard } from '@capacitor/keyboard';
+
 @Component({
   selector: 'app-herb-home',
   templateUrl: './herb-home.page.html',
@@ -25,6 +28,7 @@ export class HerbHomePage {
   public searchTerm: string = '';
   isAdmin: boolean = false;
   @ViewChild('swiperContainer') swiperContainer: any;
+  @ViewChild(IonTabs) tabs: IonTabs; // Add this line to get a reference to IonTabs
   public loadingData: boolean = false;
 
   pictures = [ 
@@ -41,6 +45,7 @@ export class HerbHomePage {
     private authService : AuthService,
     private cdr : ChangeDetectorRef,
     private userinfoservice:UserinfoService,
+    private toastController: ToastController,
     
   ) {
     this.firstaid = this.dataService.getHerbInfoAlphabetically();
@@ -57,7 +62,8 @@ export class HerbHomePage {
       this.searchResults = null;
     }
   }
-  
+
+
   async openNewModal() {
     const modal = await this.modalController.create({
       component: HerbCreatePage,
@@ -66,17 +72,6 @@ export class HerbHomePage {
 
     return await modal.present();
   }
-
-  async upload(){
-    const image = await Camera.getPhoto({ 
-     quality:90, 
-     allowEditing: false, 
-     resultType:CameraResultType.Uri,
-     source: CameraSource.Photos
-   });
-    const imageUrl = image.webPath;
-    document.getElementById('cameraImage').setAttribute('src',imageUrl);
-   }
 
    ngOnInit() {
     this.authService.isAdmin$
@@ -122,4 +117,15 @@ export class HerbHomePage {
     return item.id;
   }
 
+
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000, // Set the duration in milliseconds
+      position: 'bottom', // Set the position
+      color: 'success', // Set the color (optional)
+    });
+  
+    toast.present();
+  }
 }

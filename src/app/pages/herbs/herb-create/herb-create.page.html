@@ -16,10 +16,10 @@
   
   <br>
   <div class="image-container">
-    <ng-container *ngIf="!createHerbForm.get('photourl').value">
+    <ng-container *ngIf="!selectedPhotoPath">
       <ng-lottie [options]="{ path: 'assets/json/placeholder_herb.json' }"></ng-lottie>
     </ng-container>
-    <img [src]="createHerbForm.get('photourl').value" *ngIf="createHerbForm.get('photourl').value">
+    <img [src]="selectedPhotoPath" *ngIf="selectedPhotoPath">
   </div>
 
   <div class="button-container">
@@ -47,7 +47,7 @@
 
   <form [formGroup]="createHerbForm" #createForm="ngForm" (ngSubmit)="createInfo(createHerbForm.value)">
 
-    <swiper-container #swiper  (slidechange)="slideDidChange()" class="swiper"  auto-height="true"
+    <swiper-container #swiper  (slidechange)="slideDidChange()" class="swiper" 
     (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
 
     <!--segment 1 content-->
@@ -80,7 +80,8 @@
           <textarea class="card-text" autosize [minRows]="1" formControlName="title"></textarea>
           <p>Preperation</p>
           <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
-          
+          <p>Method</p>
+          <textarea class="card-text" autosize [minRows]="6" formControlName="procedure"></textarea>
       </div>
       
       <!-- Display the initial card -->
@@ -89,6 +90,8 @@
         <textarea class="card-text" autosize [minRows]="1" formControlName="title"></textarea>
         <p>Preperation</p>
         <textarea class="card-text" autosize [minRows]="6" formControlName="content"></textarea>
+        <p>Method</p>
+        <textarea class="card-text" autosize [minRows]="6" formControlName="procedure"></textarea>
         <br>
         <button type="button" (click)="addDescription()">New Method to Use</button>
       </div>

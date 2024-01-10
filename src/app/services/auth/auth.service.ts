@@ -89,15 +89,8 @@ export class AuthService {
       return from(setDoc(userDocRef, data, { merge: true }));
     }
 
-    logout(): Observable<any> {
-      return from(this.auth.signOut()).pipe(
-        switchMap(() => {
-          // Reload the app after logout
-          window.location.reload();
-          // Return an observable that never emits to complete the stream
-          return new Observable();
-        })
-      );
+    logout(){
+      return from(this.auth.signOut());
     }
 
   resetpassword(email):Observable<any>{

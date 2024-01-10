@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-tabs>
+  <!-- <ion-tabs>
     <div class="tabs">
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="herb-home">
@@ -25,6 +25,65 @@
         </ion-tab-button>
       </ion-tab-bar>
     </div>
-  </ion-tabs>
+  </ion-tabs> -->
+
+<ion-tabs >
+  <!-- <ion-tab-bar slot="bottom"> -->
+    <div class="navigation">
+      <ul>
+  
+        <li class="list" [class.active]="isActive('herb-home')" (click)="navigateTo('herb-home')">
+          <a routerLink="/tabs/tabs/herb-home">
+            <span class="icon">
+              <ion-icon [name]="isActive('herb-home') ? 'leaf-outline' : 'leaf'"></ion-icon>
+            </span>
+            <span class="text">Herbs</span>
+          </a>
+        </li>
+  
+        <li class="list" [class.active]="isActive('firstaid-home')" (click)="navigateTo('firstaid-home')">
+          <a routerLink="/tabs/tabs/firstaid-home">
+            <span class="icon">
+              <ion-icon [name]="isActive('firstaid-home') ? 'bandage-outline' : 'bandage'"></ion-icon>
+            </span>
+            <span class="text">First Aid</span>
+          </a>
+        </li>
+  
+        <li class="list" [class.active]="isActive('info-home')" (click)="navigateTo('info-home')">
+          <a routerLink="/tabs/tabs/info-home">
+            <span class="icon">
+              <ion-icon [name]="isActive('info-home') ? 'book-outline' : 'book'"></ion-icon>
+            </span>
+            <span class="text">Learn</span>
+          </a>
+        </li>
+  
+        <li class="list" [class.active]="isActive('aidkit-home')" (click)="navigateTo('aidkit-home')">
+          <a routerLink="/tabs/tabs/aidkit-home">
+            <span class="icon">
+              <ion-icon [name]="isActive('aidkit-home') ? 'medkit-outline' : 'medkit'"></ion-icon>
+            </span>
+            <span class="text">Kit</span>
+          </a>
+        </li>
+  
+        <li class="list" [class.active]="isActive('user-home')" (click)="navigateTo('user-home')">
+          <a routerLink="/tabs/tabs/user-home">
+            <span class="icon">
+              <ion-icon name="menu-sharp"></ion-icon>
+            </span>
+            <span class="text">Menu</span>
+          </a>
+        </li>
+  
+  
+        <div class="indicator"><span></span></div>
+      </ul>
+    </div>
+  <!-- </ion-tab-bar> -->
+ 
+</ion-tabs>
+
 </ion-content>
 

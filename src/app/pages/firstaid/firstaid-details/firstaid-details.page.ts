@@ -61,6 +61,7 @@ export class FirstaidDetailsPage implements OnInit {
     // console.log(this.swiper?.nativeElement.swiper.activeIndex);
     this.selectedSegment = (this.swiper.nativeElement.swiper.activeIndex + 1).toString();
   }
+  
   onTouchStart(event: TouchEvent) {
     // Check if the touches array is defined and has at least one element
     if (event.touches && event.touches.length > 0) {
